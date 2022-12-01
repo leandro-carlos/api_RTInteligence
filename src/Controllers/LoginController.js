@@ -5,23 +5,56 @@ import bcrypt from "bcrypt";
 
 class LoginController {
   // faltando implementar algumas funcionalidades
-  static login = (req, res) => {
+  static login = async (req, res) => {
     const { email, password } = req.body;
 
-    const passwordExist = bcrypt.compare(password, function (err, result) {
-      result == true;
-    });
+    const emailExist = await api_users.findOne({ email: email });
 
-    // return res.send(200).json(userExistEmail);
+    // const project = await Project.findOne({ where: { title: 'My Title' } });
+
+    console.log(emailExist);
+
+    const match = await bcrypt.compare(password, emailExist.password);
+
+    if (emailExist && match) {
+      return res.status(200).json({
+        message: "bem vindo",
+      });
+    } else {
+      return res.status(200).json({
+        message: "deu erro",
+      });
+    }
   };
 
   // função teste
-  static handleLogin = async (req, res) => {
+  static getAllUser = async (req, res) => {
     return await api_users.findAll().then((response) => res.json(response));
   };
 
-  // a fazer -> pendente
-  static register = async (req, res) => {};
+  // pronta -> tratar erros só
+  static register = async (req, res) => {
+    const { nome, email, password } = req.body;
+
+    const body = {
+      name: nome,
+      email: email,
+      password: await bcrypt.hash(password, 8),
+    };
+
+    await api_users
+      .create(body)
+      .then(() => {
+        return res.status(200).json({
+          message: "usuario cadastrado com sucesso!!",
+        });
+      })
+      .catch((err) => {
+        return res.json({
+          message: "Deu erro na requisição",
+        });
+      });
+  };
 }
 
 export default LoginController;
