@@ -1,11 +1,11 @@
 import Express from "express";
 import sequelize from "./Config/Config.js";
 import User from "./Models/User.js";
-// import routes from "./Routes.js";
+import routes from "./Routes.js";
 
 const app = Express();
-// app.use(routes);
 app.use(Express.json());
+app.use(routes);
 
 // sequelize
 //   .sync()
@@ -20,12 +20,12 @@ app.use(Express.json());
 //   return res.send("teste");
 // });
 
-sequelize.sync().then(() => {
-  User.create({
-    name: "dasda",
-    email: "dada@dakja.com",
-    password: "32131",
-  }).then((err) => console.log("deu certo", err));
-});
+// sequelize.sync().then(() => {
+//   User.create({
+//     name: "dasda",
+//     email: "dada@dakja.com",
+//     password: "32131",
+//   }).then((err) => console.log("deu certo", err));
+// });
 
 export default app;
