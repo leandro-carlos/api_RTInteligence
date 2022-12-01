@@ -1,24 +1,26 @@
-import json from "express";
 import api_users from "../Models/User.js";
-import sequelize from "../Config/Config.js";
 import bcrypt from "bcrypt";
 
 class LoginController {
-  // faltando implementar algumas funcionalidades
+  // pronta -> tratar erros só (quando)
   static login = async (req, res) => {
     const { email, password } = req.body;
 
-    const emailExist = await api_users.findOne({ email: email });
+    // faltando corrigir, quando tem email ele da certinho, mas quando o email não existe no banco
+    // ele retorna um array vazio, e com isso quebra a linha 17
 
-    // const project = await Project.findOne({ where: { title: 'My Title' } });
+    const emailExist = await api_users.findAll({ where: { email: email } });
 
-    console.log(emailExist);
-
-    const match = await bcrypt.compare(password, emailExist.password);
+    // retorna true ou false
+    const match = await bcrypt.compare(
+      password,
+      emailExist[0]?.dataValues.password
+    );
 
     if (emailExist && match) {
       return res.status(200).json({
         message: "bem vindo",
+        data: emailExist,
       });
     } else {
       return res.status(200).json({
@@ -27,17 +29,12 @@ class LoginController {
     }
   };
 
-  // função teste
-  static getAllUser = async (req, res) => {
-    return await api_users.findAll().then((response) => res.json(response));
-  };
-
   // pronta -> tratar erros só
   static register = async (req, res) => {
-    const { nome, email, password } = req.body;
+    const { name, email, password } = req.body;
 
     const body = {
-      name: nome,
+      name: name,
       email: email,
       password: await bcrypt.hash(password, 8),
     };
@@ -47,11 +44,13 @@ class LoginController {
       .then(() => {
         return res.status(200).json({
           message: "usuario cadastrado com sucesso!!",
+          data: body,
         });
       })
       .catch((err) => {
         return res.json({
           message: "Deu erro na requisição",
+          err,
         });
       });
   };
