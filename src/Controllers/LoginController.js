@@ -9,22 +9,24 @@ class LoginController {
     // faltando corrigir, quando tem email ele da certinho, mas quando o email não existe no banco
     // ele retorna um array vazio, e com isso quebra a linha 17
 
-    const emailExist = await api_users.findAll({ where: { email: email } });
+    try {
+      const emailExist = await api_users.findAll({ where: { email: email } });
 
-    // retorna true ou false
-    const match = await bcrypt.compare(
-      password,
-      emailExist[0]?.dataValues.password
-    );
+      // retorna true ou false
+      const match = await bcrypt.compare(
+        password,
+        emailExist[0]?.dataValues.password
+      );
 
-    if (emailExist && match) {
-      return res.status(200).json({
-        message: "bem vindo",
-        data: emailExist,
-      });
-    } else {
-      return res.status(200).json({
-        message: "deu erro",
+      if (emailExist && match) {
+        return res.status(200).json({
+          message: "bem vindo",
+          data: emailExist,
+        });
+      }
+    } catch (error) {
+      return res.status(404).json({
+        message: "Login não encontrado -> " + error,
       });
     }
   };

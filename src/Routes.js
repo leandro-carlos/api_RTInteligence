@@ -3,6 +3,7 @@ import { Router } from "express";
 // Controladores
 
 import LoginController from "./Controllers/LoginController.js";
+import PerguntasController from "./Controllers/PerguntasController.js";
 
 const routes = new Router();
 
@@ -10,5 +11,6 @@ const routes = new Router();
 
 routes.post("/register", LoginController.register);
 routes.post("/login", LoginController.login);
+routes.get("/getAllQuestions", PerguntasController.getAllPerguntas);
 
 export default routes;

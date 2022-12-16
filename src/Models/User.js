@@ -6,8 +6,8 @@ const api_users = sequelize.define("api_users", {
   name: { type: DataTypes.STRING },
   email: { type: DataTypes.STRING },
   password: { type: DataTypes.STRING },
-  createdAt: { type: DataTypes.DATE },
-  updatedAt: { type: DataTypes.DATE },
+  // createdAt: { type: DataTypes.DATE },
+  // updatedAt: { type: DataTypes.DATE },
 });
 
 sequelize
