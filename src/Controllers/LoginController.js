@@ -23,6 +23,10 @@ class LoginController {
           message: "bem vindo",
           data: emailExist,
         });
+      } else {
+        return res.status(404).json({
+          message: "Email ou senhas incorretas",
+        });
       }
     } catch (error) {
       return res.status(404).json({
