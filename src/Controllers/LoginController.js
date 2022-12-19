@@ -19,10 +19,7 @@ class LoginController {
       );
 
       if (emailExist && match) {
-        return res.status(200).json({
-          message: "bem vindo",
-          data: emailExist,
-        });
+        return res.status(200).json(emailExist);
       } else {
         return res.status(404).json({
           message: "Email ou senhas incorretas",

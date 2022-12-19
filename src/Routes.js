@@ -12,5 +12,6 @@ const routes = new Router();
 routes.post("/register", LoginController.register);
 routes.post("/login", LoginController.login);
 routes.get("/getAllQuestions", PerguntasController.getAllPerguntas);
+routes.post("/respostaQuestionario", PerguntasController.responderPerguntas);
 
 export default routes;
