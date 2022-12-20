@@ -42,6 +42,11 @@ class LoginController {
       password: await bcrypt.hash(password, 8),
     };
 
+    await api_users.findOne({ where: { email: email } }).then((resposta) => {
+      if (resposta) {
+      }
+    });
+
     await api_users
       .create(body)
       .then(() => {

@@ -14,23 +14,34 @@ class PerguntasController {
   };
 
   static replyQuiz = async (req, res) => {
-    await Promise.all(
-      req.body.map(async (item) => {
-        const body = {
-          id_user: item.id_user,
-          id_pergunta: item.id_pergunta,
-          nivel: item.nivel,
-        };
+    req.body.map(async (item) => {
+      const body = {
+        id_user: item.id_user,
+        id_pergunta: item.id_pergunta,
+        nivel: item.nivel,
+      };
 
-        try {
-          return await api_respostas.create(body).then(() => {
-            res.status(200).send(true);
-          });
-        } catch (error) {
-          res.send(error);
-        }
+      api_respostas.create(body).then(() => {
+        res.status(200).send(true);
+      });
+    });
+  };
+
+  static calculoNivel = async (req, res) => {
+    const { id } = req.body;
+    let calculo = 0;
+
+    api_respostas
+      .findAll({ where: { id_user: id } })
+      .then((content) => {
+        content.forEach((item) => {
+          calculo += parseInt(item.dataValues.nivel);
+        });
+        res.json({ calculo });
       })
-    );
+      .catch((err) => {
+        console.log(err);
+      });
   };
 }
 
