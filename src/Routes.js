@@ -1,4 +1,5 @@
 import { Router } from "express";
+import app from "./app.js";
 
 // Controladores
 
@@ -11,7 +12,10 @@ const routes = new Router();
 
 routes.post("/register", LoginController.register);
 routes.post("/login", LoginController.login);
-routes.get("/getAllQuestions", PerguntasController.getAllPerguntas);
-routes.post("/respostaQuestionario", PerguntasController.responderPerguntas);
+
+// Rota de perguntas
+
+routes.get("/getAllQuestions", PerguntasController.getAllQuestions);
+routes.post("/replyQuiz", PerguntasController.replyQuiz);
 
 export default routes;
