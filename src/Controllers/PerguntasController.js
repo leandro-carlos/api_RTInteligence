@@ -1,3 +1,4 @@
+import api_datas from "../Models/datas.js";
 import api_perguntas from "../Models/Perguntas.js";
 import api_respostas from "../Models/Respostas.js";
 
@@ -13,28 +14,43 @@ class PerguntasController {
   };
 
   static replyQuiz = async (req, res) => {
-    req.body.map(async (item) => {
-      const body = {
-        id_user: item.id_user,
-        id_categoria: item.id_categoria,
-        nivel: item.nivel,
-      };
+    const newdate = new Date();
+    const data = `${newdate.getDate()}/${
+      newdate.getMonth() + 1
+    }/${newdate.getFullYear()}`;
 
-      api_respostas.create(body).then(() => {
-        res.status(200).send(true);
-      });
-    });
+    const { id_user } = req.body;
+
+    api_datas
+      .create({
+        id_user: id_user,
+        data: data,
+      })
+      .then(
+        () =>
+          req.body.resp.map(async (item) => {
+            const body = {
+              id_user: id_user,
+              id_categoria: item.id_categoria,
+              nivel: item.nivel,
+              data: data,
+            };
+
+            api_respostas.create(body);
+          }),
+        res.status(200).send(true)
+      );
   };
 
   static dataToGraph = async (req, res) => {
-    const { id } = req.body;
+    const { id, data } = req.body;
     let calculo = 0;
 
     const dataValues = [];
 
     api_respostas
       .findAll({
-        where: { id_user: id },
+        where: { id_user: id, data: data },
         attributes: ["nivel"],
         raw: true,
         include: [
