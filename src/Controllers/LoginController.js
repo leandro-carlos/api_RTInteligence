@@ -12,6 +12,8 @@ class LoginController {
     try {
       const emailExist = await api_users.findAll({ where: { email: email } });
 
+      console.log(emailExist[0].dataValues);
+
       // retorna true ou false
       const match = await bcrypt.compare(
         password,
@@ -19,6 +21,7 @@ class LoginController {
       );
 
       if (emailExist && match) {
+        delete emailExist[0].dataValues["password"];
         return res.status(200).json(emailExist);
       } else {
         return res.status(404).json({
@@ -45,10 +48,10 @@ class LoginController {
 
     await api_users.findOne({ where: { email: email } }).then((resposta) => {
       if (resposta == undefined) {
-
         api_users
           .create(body)
-          .then(() => {
+          .then((content) => {
+            delete body["password"];
             return res.status(201).json({
               message: "usuario cadastrado com sucesso!!",
               data: body,
@@ -60,10 +63,10 @@ class LoginController {
               err,
             });
           });
+      } else {
+        res.status(418).send("Email já existe no banco");
       }
-      else { res.status(418).send("Email já existe no banco") }
     });
-
   };
 }
 

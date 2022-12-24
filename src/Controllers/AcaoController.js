@@ -3,7 +3,7 @@ import api_acaos from "../Models/Acao.js";
 import api_acompanhamentos from "../Models/Acompanhamento.js";
 
 class AcaoController {
-  static respondrAcao = async (req, res) => {
+  static answerActionAndFollowUp = async (req, res) => {
     const data = req.body;
 
     let bodyAcao = {

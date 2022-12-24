@@ -4,26 +4,27 @@ import { Router } from "express";
 
 import LoginController from "./Controllers/LoginController.js";
 import PerguntasController from "./Controllers/PerguntasController.js";
-import AcaoController from './Controllers/AcaoController.js'
+import AcaoController from "./Controllers/AcaoController.js";
 
 const routes = new Router();
 
-// rotas do usuario
+// Route of user
 
-routes.post("/register", LoginController.register);
-routes.post("/login", LoginController.login);
+routes.post("/register", LoginController.register); // Registrar um novo usúario
+routes.post("/login", LoginController.login); // Logar
 
-// Rota de Questionario
+// Route of quiz
 
-routes.get("/getAllQuestions", PerguntasController.getAllQuestions);
-routes.post("/replyQuiz", PerguntasController.replyQuiz);
+routes.get("/getAllQuestions", PerguntasController.getAllQuestions); // Listar todas as perguntas
+routes.post("/replyQuiz", PerguntasController.replyQuiz); // Responder cada pergunta do questionario.
 
-// Rota de resultados
+// Route of action
 
-routes.post("/calculoNivel", PerguntasController.calculoNivel);
+routes.post("/answerActionAndFollow", AcaoController.answerActionAndFollowUp); // reply a action (with goal) and the 3 follow up (3 text input)
 
-// Rotas de acao
+// Route of Result
 
-routes.post("/teste", AcaoController.respondrAcao);
+routes.post("/dataToGraph", PerguntasController.dataToGraph); // Route to return of data to graph
+// routes.get("/teste");
 
 export default routes;

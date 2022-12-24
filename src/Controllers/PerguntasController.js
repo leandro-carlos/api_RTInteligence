@@ -1,5 +1,4 @@
 import api_perguntas from "../Models/Perguntas.js";
-import api_users from "../Models/User.js";
 import api_respostas from "../Models/Respostas.js";
 
 class PerguntasController {
@@ -27,7 +26,7 @@ class PerguntasController {
     });
   };
 
-  static calculoNivel = async (req, res) => {
+  static dataToGraph = async (req, res) => {
     const { id } = req.body;
     let calculo = 0;
 
@@ -47,8 +46,12 @@ class PerguntasController {
       })
       .then((content) => {
         content.forEach((item) => {
-          calculo += item.nivel
-          var className = { categoria: item['api_pergunta.categoria'], id_categoria: item['api_pergunta.id_categoria'], nivel: item.nivel }
+          calculo += item.nivel;
+          var className = {
+            categoria: item["api_pergunta.categoria"],
+            id_categoria: item["api_pergunta.id_categoria"],
+            nivel: item.nivel,
+          };
           dataValues.push(className);
         });
 
