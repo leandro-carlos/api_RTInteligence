@@ -26,8 +26,9 @@ class LoginController {
         });
       }
     } catch (error) {
-      return res.status(404).json({
-        message: "Login não encontrado -> " + error,
+      // console.log('erro da função login do loginController', error);
+      return res.status(200).json({
+        message: "Login não encontrado",
       });
     }
   };
@@ -43,24 +44,26 @@ class LoginController {
     };
 
     await api_users.findOne({ where: { email: email } }).then((resposta) => {
-      if (resposta) {
+      if (resposta == undefined) {
+
+        api_users
+          .create(body)
+          .then(() => {
+            return res.status(201).json({
+              message: "usuario cadastrado com sucesso!!",
+              data: body,
+            });
+          })
+          .catch((err) => {
+            return res.json({
+              message: "Deu erro na requisição",
+              err,
+            });
+          });
       }
+      else { res.status(418).send("Email já existe no banco") }
     });
 
-    await api_users
-      .create(body)
-      .then(() => {
-        return res.status(200).json({
-          message: "usuario cadastrado com sucesso!!",
-          data: body,
-        });
-      })
-      .catch((err) => {
-        return res.json({
-          message: "Deu erro na requisição",
-          err,
-        });
-      });
   };
 }
 

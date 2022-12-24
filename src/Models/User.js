@@ -10,11 +10,4 @@ const api_users = sequelize.define("api_users", {
   // updatedAt: { type: DataTypes.DATE },
 });
 
-sequelize
-  .sync()
-  .then(() => {
-    console.log("api_users table created suceel");
-  })
-  .catch((error) => console.error("Unable to create table : ", error));
-
 export default api_users;

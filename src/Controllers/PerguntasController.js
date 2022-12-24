@@ -17,7 +17,7 @@ class PerguntasController {
     req.body.map(async (item) => {
       const body = {
         id_user: item.id_user,
-        id_pergunta: item.id_pergunta,
+        id_categoria: item.id_categoria,
         nivel: item.nivel,
       };
 
@@ -31,13 +31,28 @@ class PerguntasController {
     const { id } = req.body;
     let calculo = 0;
 
+    const dataValues = [];
+
     api_respostas
-      .findAll({ where: { id_user: id } })
+      .findAll({
+        where: { id_user: id },
+        attributes: ["nivel"],
+        raw: true,
+        include: [
+          {
+            model: api_perguntas,
+            attributes: ["categoria", "id_categoria"],
+          },
+        ],
+      })
       .then((content) => {
         content.forEach((item) => {
-          calculo += parseInt(item.dataValues.nivel);
+          calculo += item.nivel
+          var className = { categoria: item['api_pergunta.categoria'], id_categoria: item['api_pergunta.id_categoria'], nivel: item.nivel }
+          dataValues.push(className);
         });
-        res.json({ calculo });
+
+        res.json({ data: dataValues, calculo });
       })
       .catch((err) => {
         console.log(err);

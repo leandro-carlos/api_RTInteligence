@@ -11,11 +11,4 @@ const api_perguntas = sequelize.define("api_perguntas", {
   pergunta: { type: DataTypes.STRING },
 });
 
-sequelize
-  .sync()
-  .then(() => {
-    console.log("api_perguntas table created suceel");
-  })
-  .catch((error) => console.error("Unable to create table : ", error));
-
 export default api_perguntas;

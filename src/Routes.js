@@ -4,6 +4,7 @@ import { Router } from "express";
 
 import LoginController from "./Controllers/LoginController.js";
 import PerguntasController from "./Controllers/PerguntasController.js";
+import AcaoController from './Controllers/AcaoController.js'
 
 const routes = new Router();
 
@@ -20,5 +21,9 @@ routes.post("/replyQuiz", PerguntasController.replyQuiz);
 // Rota de resultados
 
 routes.post("/calculoNivel", PerguntasController.calculoNivel);
+
+// Rotas de acao
+
+routes.post("/teste", AcaoController.respondrAcao);
 
 export default routes;
