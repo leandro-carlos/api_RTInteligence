@@ -21,10 +21,13 @@ routes.post("/replyQuiz", PerguntasController.replyQuiz); // Responder cada perg
 // Route of action
 
 routes.post("/answerActionAndFollow", AcaoController.answerActionAndFollowUp); // reply a action (with goal) and the 3 follow up (3 text input)
-
+routes.post("/getActionAndFollow", AcaoController.getActionAndFollowUp);
 // Route of Result
 
 routes.post("/dataToGraph", PerguntasController.dataToGraph); // Route to return of data to graph
 // routes.get("/teste");
+
+//Route of dropDown dates
+routes.post("/dates", PerguntasController.dates);
 
 export default routes;

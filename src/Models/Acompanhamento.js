@@ -11,6 +11,7 @@ const api_acompanhamentos = sequelize.define("api_acompanhamentos", {
   quais_aprendizados: { type: DataTypes.STRING },
   evolucao_conquista: { type: DataTypes.STRING },
   melhorar: { type: DataTypes.STRING },
+  data: { type: DataTypes.STRING },
   createdAt: { type: DataTypes.TIME },
   updatedAt: { type: DataTypes.TIME },
 });

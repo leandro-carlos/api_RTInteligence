@@ -1,3 +1,4 @@
+import { where } from "sequelize";
 import api_datas from "../Models/datas.js";
 import api_perguntas from "../Models/Perguntas.js";
 import api_respostas from "../Models/Respostas.js";
@@ -11,6 +12,15 @@ class PerguntasController {
     } catch (error) {
       res.send(error);
     }
+  };
+
+  static dates = async (req, res) => {
+    const { id_user } = req.body;
+    try {
+      return await api_datas
+        .findAll({ where: { id_user: id_user }, attributes: ["data"] })
+        .then((data) => res.status(200).json(data));
+    } catch (error) {}
   };
 
   static replyQuiz = async (req, res) => {
