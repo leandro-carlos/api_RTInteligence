@@ -22,7 +22,7 @@ class PerguntasController {
     try {
       return await api_datas
         .findAll({ where: { id_user: id_user }, attributes: ["data"] })
-        .then((data) => res.status(200).json(data));
+        .then((data) => res.status(200).send(data));
     } catch (error) {}
   };
 

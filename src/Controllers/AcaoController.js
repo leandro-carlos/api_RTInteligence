@@ -1,5 +1,5 @@
 import sequelize from "../Config/Config.js";
-import { api_acompanhamentos, api_acaos } from "../Models/index.js";
+import { api_acompanhamentos, api_acaos, api_users } from "../Models/index.js";
 
 class AcaoController {
   static answerActionAndFollowUp = async (req, res) => {
@@ -23,15 +23,37 @@ class AcaoController {
       data: date,
     };
 
-    sequelize
-      .transaction(async (transaction) => {
-        api_acompanhamentos.create(bodyAcompanhamento);
-        api_acaos.create(bodyAcao);
-      })
-      .then((content) => res.status(200).send(200))
-      .catch((err) => {
-        res.status(400).send("Ocorreu erro interno, tente novamente!");
+    // const newdate = new Date();
+    const dateMonthYear = `${newdate.getMonth() + 1}/${newdate.getFullYear()}`;
+
+    api_users
+      .findOne({ where: { id: data.id_user }, attributes: ["finalizou"] })
+      .then((item) => {
+        if (item.dataValues.finalizou == dateMonthYear) {
+          res.status(200).send(false);
+        } else {
+          sequelize
+            .transaction(async (transaction) => {
+              api_acompanhamentos.create(bodyAcompanhamento);
+              api_acaos.create(bodyAcao);
+              api_users.update(
+                { finalizou: dateMonthYear },
+                { where: { id: data.id_user } }
+              );
+            })
+            .then((content) => res.status(200).send(true))
+            .catch((err) => {
+              res.status(400).send("Ocorreu erro interno, tente novamente!");
+            });
+        }
       });
+  };
+
+  static testeUp = async (req, res) => {
+    const { id_user } = req.body;
+
+    const newdate = new Date();
+    const date = `${newdate.getMonth() + 1}/${newdate.getFullYear()}`;
   };
 
   // static getActionAndFollowUp = async (req, res) => {
