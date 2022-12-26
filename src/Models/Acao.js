@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize";
 import sequelize from "../Config/Config.js";
+import { api_acompanhamentos } from "./index.js";
 
 const api_acaos = sequelize.define("api_acaos", {
   id: {
@@ -7,7 +8,9 @@ const api_acaos = sequelize.define("api_acaos", {
     autoIncrement: true,
     primaryKey: true,
   },
-  id_user: { type: DataTypes.INTEGER },
+  id_user: {
+    type: DataTypes.INTEGER,
+  },
   name_categoria: { type: DataTypes.STRING },
   descricao_categoria: { type: DataTypes.STRING },
   data: { type: DataTypes.STRING },

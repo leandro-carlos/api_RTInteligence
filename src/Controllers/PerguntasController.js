@@ -1,7 +1,10 @@
 import { where } from "sequelize";
-import api_datas from "../Models/datas.js";
-import api_perguntas from "../Models/Perguntas.js";
-import api_respostas from "../Models/Respostas.js";
+
+import { api_acaos } from "../Models/index.js";
+import { api_acompanhamentos } from "../Models/index.js";
+import { api_datas } from "../Models/index.js";
+import { api_perguntas } from "../Models/index.js";
+import { api_respostas } from "../Models/index.js";
 
 class PerguntasController {
   static getAllQuestions = async (req, res) => {
@@ -85,6 +88,26 @@ class PerguntasController {
       })
       .catch((err) => {
         console.log(err);
+      });
+  };
+
+  static getActionAndFollow = async (req, res) => {
+    const { id_user } = req.body;
+
+    let arrayTeste = [];
+
+    api_acompanhamentos
+      .findAll({
+        where: { id_user: id_user },
+      })
+      .then((content) => {
+        api_acaos
+          .findAll({ where: { id_user: id_user } })
+          .then((contentAction) => {
+            arrayTeste.push({ acompanhamento: content });
+            arrayTeste.push({ acao: contentAction });
+            res.status(200).send(arrayTeste);
+          });
       });
   };
 }

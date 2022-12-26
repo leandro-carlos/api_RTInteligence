@@ -1,6 +1,5 @@
 import sequelize from "../Config/Config.js";
-import api_acaos from "../Models/Acao.js";
-import api_acompanhamentos from "../Models/Acompanhamento.js";
+import { api_acompanhamentos, api_acaos } from "../Models/index.js";
 
 class AcaoController {
   static answerActionAndFollowUp = async (req, res) => {
@@ -24,12 +23,14 @@ class AcaoController {
       data: date,
     };
 
+    console.log(data.acompanhamento.quais_aprendizados);
+
     sequelize
       .transaction(async (transaction) => {
         api_acompanhamentos.create(bodyAcompanhamento);
         api_acaos.create(bodyAcao);
       })
-      .then((content) => res.status(200).send(true))
+      .then((content) => res.status(200).send(200))
       .catch((err) => {
         res.status(400).send("Ocorreu erro interno, tente novamente!");
       });
