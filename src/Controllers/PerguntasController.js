@@ -92,23 +92,21 @@ class PerguntasController {
   };
 
   static getActionAndFollow = async (req, res) => {
-    const { id_user } = req.body;
+    try {
+      const { id_user, data } = req.body;
 
-    let arrayTeste = [];
-
-    api_acompanhamentos
-      .findAll({
-        where: { id_user: id_user },
-      })
-      .then((content) => {
-        api_acaos
-          .findAll({ where: { id_user: id_user } })
-          .then((contentAction) => {
-            arrayTeste.push({ acompanhamento: content });
-            arrayTeste.push({ acao: contentAction });
-            res.status(200).send(arrayTeste);
-          });
+      const acompanhamento = await api_acompanhamentos.findAll({
+        where: { id_user: id_user, data: data },
       });
+      const acao = await api_acaos.findAll({
+        where: { id_user: id_user, data: data },
+      });
+
+      const arrayTeste = [{ acompanhamento }, { acao }];
+      res.status(200).send(arrayTeste);
+    } catch (error) {
+      res.status(500).send("Deu erro interno");
+    }
   };
 }
 

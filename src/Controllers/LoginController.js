@@ -21,6 +21,8 @@ class LoginController {
       );
 
       if (emailExist && match) {
+        delete emailExist[0].dataValues["updatedAt"];
+        delete emailExist[0].dataValues["createdAt"];
         delete emailExist[0].dataValues["password"];
         return res.status(200).json(emailExist);
       } else {
@@ -29,10 +31,7 @@ class LoginController {
         });
       }
     } catch (error) {
-      // console.log('erro da função login do loginController', error);
-      return res.status(200).json({
-        message: "Login não encontrado",
-      });
+      res.status(422).send(false);
     }
   };
 
@@ -67,6 +66,14 @@ class LoginController {
         res.status(418).send("Email já existe no banco");
       }
     });
+  };
+
+  static getAllUsers = async (req, res) => {
+    api_users
+      .findAll({
+        attributes: ["id", "supervisor", "name", "email", "password"],
+      })
+      .then((data) => res.status(200).json({ data }));
   };
 }
 

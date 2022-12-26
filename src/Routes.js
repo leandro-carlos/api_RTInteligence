@@ -12,6 +12,7 @@ const routes = new Router();
 
 routes.post("/register", LoginController.register); // Registrar um novo usúario
 routes.post("/login", LoginController.login); // Logar
+routes.get("/getAllUsers", LoginController.getAllUsers); // Listar all users
 
 // Route of quiz
 
@@ -26,7 +27,6 @@ routes.post("/answerActionAndFollow", AcaoController.answerActionAndFollowUp); /
 
 routes.post("/dataToGraph", PerguntasController.dataToGraph); // Route to return of data to graph
 routes.post("/getActionAndFollow", PerguntasController.getActionAndFollow);
-// routes.get("/teste");
 
 //Route of dropDown dates
 routes.post("/dates", PerguntasController.dates);
