@@ -23,8 +23,6 @@ class AcaoController {
       data: date,
     };
 
-    console.log(data.acompanhamento.quais_aprendizados);
-
     sequelize
       .transaction(async (transaction) => {
         api_acompanhamentos.create(bodyAcompanhamento);

@@ -12,8 +12,6 @@ class LoginController {
     try {
       const emailExist = await api_users.findAll({ where: { email: email } });
 
-      console.log(emailExist[0].dataValues);
-
       // retorna true ou false
       const match = await bcrypt.compare(
         password,
