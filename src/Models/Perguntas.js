@@ -9,6 +9,7 @@ const api_perguntas = sequelize.define("api_perguntas", {
   },
   categoria: { type: DataTypes.STRING },
   pergunta: { type: DataTypes.STRING },
+  cor: { type: DataTypes.STRING },
 });
 
 export default api_perguntas;

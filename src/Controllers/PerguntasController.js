@@ -69,7 +69,7 @@ class PerguntasController {
         include: [
           {
             model: api_perguntas,
-            attributes: ["categoria", "id_categoria"],
+            attributes: ["categoria", "id_categoria", "cor"],
           },
         ],
       })
@@ -80,6 +80,7 @@ class PerguntasController {
             categoria: item["api_pergunta.categoria"],
             id_categoria: item["api_pergunta.id_categoria"],
             nivel: item.nivel,
+            cor: item["api_pergunta.cor"],
           };
           dataValues.push(className);
         });
