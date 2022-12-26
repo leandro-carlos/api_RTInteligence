@@ -3,9 +3,32 @@ import { Router } from "express";
 // Controladores
 
 import LoginController from "./Controllers/LoginController.js";
+import PerguntasController from "./Controllers/PerguntasController.js";
+import AcaoController from "./Controllers/AcaoController.js";
 
 const routes = new Router();
 
-routes.get("/users", LoginController.handleLogin);
+// Route of user
+
+routes.post("/register", LoginController.register); // Registrar um novo usúario
+routes.post("/login", LoginController.login); // Logar
+routes.get("/getAllUsers", LoginController.getAllUsers); // Listar all users
+
+// Route of quiz
+
+routes.get("/getAllQuestions", PerguntasController.getAllQuestions); // Listar todas as perguntas
+routes.post("/replyQuiz", PerguntasController.replyQuiz); // Responder cada pergunta do questionario.
+
+// Route of action
+
+routes.post("/answerActionAndFollow", AcaoController.answerActionAndFollowUp); // reply a action (with goal) and the 3 follow up (3 text input)
+
+// Route of Result
+
+routes.post("/dataToGraph", PerguntasController.dataToGraph); // Route to return of data to graph
+routes.post("/getActionAndFollow", PerguntasController.getActionAndFollow);
+
+//Route of dropDown dates
+routes.post("/dates", PerguntasController.dates);
 
 export default routes;
