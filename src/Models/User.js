@@ -3,8 +3,8 @@ import sequelize from "../Config/Config.js";
 
 const api_users = sequelize.define("api_users", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
-  supervisor: { type: DataTypes.BOOLEAN },
-  name: { type: DataTypes.STRING },
+  supervisor: { type: DataTypes.BOOLEAN, defaultValue: false },
+  name: { type: DataTypes.STRING, allowNull: false },
   email: { type: DataTypes.STRING },
   password: { type: DataTypes.STRING },
   // createdAt: { type: DataTypes.DATE },

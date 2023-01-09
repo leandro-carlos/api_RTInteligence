@@ -71,7 +71,7 @@ class LoginController {
       .findAll({
         attributes: ["id", "supervisor", "name", "email", "password"],
       })
-      .then((data) => res.status(200).json({ data }));
+      .then((data) => res.status(200).json(data));
   };
 }
 
