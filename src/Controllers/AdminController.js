@@ -25,16 +25,21 @@ class AdminController {
 
     const { email, name, password } = req.body;
 
-    const body = {
-      name: name,
-      email: email,
-      password: await bcrypt.hash(password, 8),
-    };
+    let body = {};
+
+    if (name) {
+      body.name = name;
+    }
+    if (email) {
+      body.email = email;
+    }
+    if (password) {
+      body.password = await bcrypt.hash(password, 8);
+    }
 
     api_users
       .update(body, {
         where: { id: id },
-        WW,
       })
       .then((content) => {
         res.status(200).json({
