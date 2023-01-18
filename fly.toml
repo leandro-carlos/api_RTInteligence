@@ -1,12 +1,9 @@
-# fly.toml file generated for apiinteligence on 2022-12-16T12:48:14-03:00
+# fly.toml file generated for apiinteligencev2 on 2023-01-18T09:12:07-03:00
 
-app = "apiinteligence"
+app = "apiinteligencev2"
 kill_signal = "SIGINT"
 kill_timeout = 5
 processes = []
-
-[build]
-  builder = "heroku/buildpacks:20"
 
 [env]
   PORT = "8080"
