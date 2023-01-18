@@ -65,14 +65,6 @@ class LoginController {
       }
     });
   };
-
-  static getAllUsers = async (req, res) => {
-    api_users
-      .findAll({
-        attributes: ["id", "supervisor", "name", "email", "password"],
-      })
-      .then((data) => res.status(200).json({ data }));
-  };
 }
 
 export default LoginController;

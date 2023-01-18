@@ -5,6 +5,7 @@ import { Router } from "express";
 import LoginController from "./Controllers/LoginController.js";
 import PerguntasController from "./Controllers/PerguntasController.js";
 import AcaoController from "./Controllers/AcaoController.js";
+import AdminController from "./Controllers/AdminController.js";
 
 const routes = new Router();
 
@@ -12,7 +13,6 @@ const routes = new Router();
 
 routes.post("/register", LoginController.register); // Registrar um novo usúario
 routes.post("/login", LoginController.login); // Logar
-routes.get("/getAllUsers", LoginController.getAllUsers); // Listar all users
 
 // Route of quiz
 
@@ -31,5 +31,11 @@ routes.post("/getActionAndFollow", PerguntasController.getActionAndFollow);
 
 //Route of dropDown dates
 routes.post("/dates", PerguntasController.dates);
+
+// Route of Admin
+
+routes.get("/getAllUsers", AdminController.getAllUsers); // Listar all users
+routes.post("/deleteUser", AdminController.deleteUser);
+routes.put("/updateUser/:id", AdminController.updateUser);
 
 export default routes;

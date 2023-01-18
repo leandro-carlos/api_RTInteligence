@@ -1,5 +1,3 @@
-import { where } from "sequelize";
-
 import { api_acaos } from "../Models/index.js";
 import { api_acompanhamentos } from "../Models/index.js";
 import { api_datas } from "../Models/index.js";
