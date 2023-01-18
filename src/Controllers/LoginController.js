@@ -35,10 +35,10 @@ class LoginController {
 
   // pronta -> tratar erros só
   static register = async (req, res) => {
-    const { nome, email, password } = req.body;
+    const { name, email, password } = req.body;
 
     const body = {
-      name: nome,
+      name: name,
       email: email,
       password: await bcrypt.hash(password, 8),
     };
