@@ -21,8 +21,9 @@ routes.post("/replyQuiz", PerguntasController.replyQuiz); // Responder cada perg
 
 // Route of action
 
-routes.post("/answerActionAndFollow", AcaoController.answerActionAndFollowUp); // reply a action (with goal) and the 3 follow up (3 text input)
-routes.post("/teste", AcaoController.testeUp); // reply a action (with goal) and the 3 follow up (3 text input)
+routes.post("/answerAction", AcaoController.answerAction); // reply a action (with goal) and the 3 follow up (3 text input)
+routes.post("/answerFollower", AcaoController.answerFollower); // reply a action (with goal) and the 3 follow up (3 text input)
+// routes.post("/teste", AcaoController.testeUp); // reply a action (with goal) and the 3 follow up (3 text input)
 
 // Route of Result
 

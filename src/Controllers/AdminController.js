@@ -60,6 +60,7 @@ class AdminController {
           "email",
           "password",
           "finalizou",
+          "finalizou_acompanhamento",
         ],
       })
       .then((data) => res.status(200).json(data));
