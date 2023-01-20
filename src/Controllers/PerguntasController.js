@@ -1,5 +1,3 @@
-import { where } from "sequelize";
-
 import { api_acaos } from "../Models/index.js";
 import { api_acompanhamentos } from "../Models/index.js";
 import { api_datas } from "../Models/index.js";
@@ -22,7 +20,7 @@ class PerguntasController {
     try {
       return await api_datas
         .findAll({ where: { id_user: id_user }, attributes: ["data"] })
-        .then((data) => res.status(200).json(data));
+        .then((data) => res.status(200).send(data));
     } catch (error) {}
   };
 

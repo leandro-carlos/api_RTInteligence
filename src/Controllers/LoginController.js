@@ -35,10 +35,10 @@ class LoginController {
 
   // pronta -> tratar erros só
   static register = async (req, res) => {
-    const { nome, email, password } = req.body;
+    const { name, email, password } = req.body;
 
     const body = {
-      name: nome,
+      name: name,
       email: email,
       password: await bcrypt.hash(password, 8),
     };
@@ -64,14 +64,6 @@ class LoginController {
         res.status(418).send("Email já existe no banco");
       }
     });
-  };
-
-  static getAllUsers = async (req, res) => {
-    api_users
-      .findAll({
-        attributes: ["id", "supervisor", "name", "email", "password"],
-      })
-      .then((data) => res.status(200).json(data));
   };
 }
 

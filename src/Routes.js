@@ -5,6 +5,7 @@ import { Router } from "express";
 import LoginController from "./Controllers/LoginController.js";
 import PerguntasController from "./Controllers/PerguntasController.js";
 import AcaoController from "./Controllers/AcaoController.js";
+import AdminController from "./Controllers/AdminController.js";
 
 const routes = new Router();
 
@@ -12,7 +13,6 @@ const routes = new Router();
 
 routes.post("/register", LoginController.register); // Registrar um novo usúario
 routes.post("/login", LoginController.login); // Logar
-routes.get("/getAllUsers", LoginController.getAllUsers); // Listar all users
 
 // Route of quiz
 
@@ -21,7 +21,9 @@ routes.post("/replyQuiz", PerguntasController.replyQuiz); // Responder cada perg
 
 // Route of action
 
-routes.post("/answerActionAndFollow", AcaoController.answerActionAndFollowUp); // reply a action (with goal) and the 3 follow up (3 text input)
+routes.post("/answerAction", AcaoController.answerAction); // reply a action (with goal) and the 3 follow up (3 text input)
+routes.post("/answerFollower", AcaoController.answerFollower); // reply a action (with goal) and the 3 follow up (3 text input)
+// routes.post("/teste", AcaoController.testeUp); // reply a action (with goal) and the 3 follow up (3 text input)
 
 // Route of Result
 
@@ -30,5 +32,11 @@ routes.post("/getActionAndFollow", PerguntasController.getActionAndFollow);
 
 //Route of dropDown dates
 routes.post("/dates", PerguntasController.dates);
+
+// Route of Admin
+
+routes.get("/getAllUsers", AdminController.getAllUsers); // Listar all users
+routes.post("/deleteUser", AdminController.deleteUser);
+routes.put("/updateUser/:id", AdminController.updateUser);
 
 export default routes;
