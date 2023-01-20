@@ -55,7 +55,7 @@ class AcaoController {
       quais_aprendizados: data.quais_aprendizados,
       evolucao_conquista: data.evolucao_conquista,
       melhorar: data.melhorar,
-      data: date,
+      data: data.data,
     };
 
     api_users
@@ -64,22 +64,22 @@ class AcaoController {
         attributes: ["finalizou_acompanhamento"],
       })
       .then((item) => {
-        if (item.dataValues.finalizou_acompanhamento == data.data) {
-          res.status(200).send(false);
-        } else {
-          sequelize
-            .transaction(async (transaction) => {
-              api_acompanhamentos.create(bodyAcompanhamento);
-              api_users.update(
-                { finalizou_acompanhamento: data.data },
-                { where: { id: data.id_user } }
-              );
-            })
-            .then((content) => res.status(200).send(true))
-            .catch((err) => {
-              res.status(400).send("Ocorreu erro interno, tente novamente!");
-            });
-        }
+        // if (item.dataValues.finalizou_acompanhamento == data.data) {
+        // res.status(200).send(false);
+        // } else {
+        sequelize
+          .transaction(async (transaction) => {
+            api_acompanhamentos.create(bodyAcompanhamento);
+            api_users.update(
+              { finalizou_acompanhamento: data.data },
+              { where: { id: data.id_user } }
+            );
+          })
+          .then((content) => res.status(200).send(true))
+          .catch((err) => {
+            res.status(400).send("Ocorreu erro interno, tente novamente!");
+          });
+        // }
       });
   };
 
