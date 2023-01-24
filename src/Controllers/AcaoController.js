@@ -71,7 +71,7 @@ class AcaoController {
           .transaction(async (transaction) => {
             api_acompanhamentos.create(bodyAcompanhamento);
             api_users.update(
-              { finalizou_acompanhamento: data.data },
+              { finalizou_acompanhamento: dateMonthYear },
               { where: { id: data.id_user } }
             );
           })

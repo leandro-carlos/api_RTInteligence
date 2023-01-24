@@ -1,8 +1,11 @@
+import sequelize from "../Config/Config.js";
+import { Op } from "sequelize";
 import { api_acaos } from "../Models/index.js";
 import { api_acompanhamentos } from "../Models/index.js";
 import { api_datas } from "../Models/index.js";
 import { api_perguntas } from "../Models/index.js";
 import { api_respostas } from "../Models/index.js";
+import { api_graphcomparative } from "../Models/index.js";
 
 class PerguntasController {
   static getAllQuestions = async (req, res) => {
@@ -32,25 +35,30 @@ class PerguntasController {
 
     const { id_user } = req.body;
 
+    let nota = 0;
+
     api_datas
       .create({
         id_user: id_user,
         data: data,
       })
-      .then(
-        () =>
-          req.body.resp.map(async (item) => {
-            const body = {
-              id_user: id_user,
-              id_categoria: item.id_categoria,
-              nivel: item.nivel,
-              data: data,
-            };
+      .then(() => {
+        req.body.resp.map(async (item) => {
+          const body = {
+            id_user: id_user,
+            id_categoria: item.id_categoria,
+            nivel: item.nivel,
+            data: data,
+          };
 
-            api_respostas.create(body);
-          }),
-        res.status(200).send(true)
-      );
+          nota += item.nivel;
+          api_respostas.create(body);
+        });
+
+        api_graphcomparative
+          .create({ id_user: id_user, nota: nota })
+          .then(() => res.status(200).send(true));
+      });
   };
 
   static dataToGraph = async (req, res) => {
@@ -82,7 +90,6 @@ class PerguntasController {
           };
           dataValues.push(className);
         });
-
         res.json({ data: dataValues, calculo });
       })
       .catch((err) => {
@@ -106,6 +113,42 @@ class PerguntasController {
     } catch (error) {
       res.status(500).send("Deu erro interno");
     }
+  };
+
+  static getComparative = async (req, res) => {
+    const { id_user } = req.body;
+
+    const eightMonthsAgo = new Date(new Date() - 8 * 30 * 24 * 60 * 60 * 1000);
+
+    api_graphcomparative
+      .findAll({
+        where: {
+          id_user: id_user,
+          createdAt: { [Op.gte]: eightMonthsAgo },
+        },
+        attributes: [
+          "nota",
+          "id",
+          [
+            sequelize.Sequelize.fn(
+              "date_format",
+              sequelize.Sequelize.col("createdAt"),
+              "%m"
+            ),
+            "mesReferencia",
+          ],
+          [
+            sequelize.Sequelize.fn(
+              "date_format",
+              sequelize.Sequelize.col("createdAt"),
+              "%y"
+            ),
+            "anoReferencia",
+          ],
+        ],
+      })
+      .then((content) => res.status(200).send(content))
+      .catch((error) => res.send(error));
   };
 }
 

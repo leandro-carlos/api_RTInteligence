@@ -6,13 +6,9 @@ class LoginController {
   static login = async (req, res) => {
     const { email, password } = req.body;
 
-    // faltando corrigir, quando tem email ele da certinho, mas quando o email não existe no banco
-    // ele retorna um array vazio, e com isso quebra a linha 17
-
     try {
       const emailExist = await api_users.findAll({ where: { email: email } });
 
-      // retorna true ou false
       const match = await bcrypt.compare(
         password,
         emailExist[0]?.dataValues.password
@@ -33,7 +29,6 @@ class LoginController {
     }
   };
 
-  // pronta -> tratar erros só
   static register = async (req, res) => {
     const { name, email, password } = req.body;
 
@@ -64,6 +59,10 @@ class LoginController {
         res.status(418).send("Email já existe no banco");
       }
     });
+  };
+
+  static checkVersion = async (req, res) => {
+    res.status(200).json({ version: 1.0 });
   };
 }
 
