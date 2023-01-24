@@ -56,7 +56,7 @@ class PerguntasController {
         });
 
         api_graphcomparative
-          .create({ id_user: id_user, nota: nota })
+          .create({ id_user: id_user, nota: nota, dataReferencia: data })
           .then(() => res.status(200).send(true));
       });
   };

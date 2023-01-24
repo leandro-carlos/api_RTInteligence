@@ -39,6 +39,7 @@ routes.post("/register", LoginController.register); // Registrar um novo usúari
 routes.get("/getAllUsers", AdminController.getAllUsers); // Listar all users
 routes.put("/updateUser/:id", AdminController.updateUser);
 routes.post("/deleteUser", AdminController.deleteUser);
+routes.post("/restart", AdminController.restart);
 
 // Route version
 

@@ -1,5 +1,14 @@
-import api_users from "../Models/User.js";
+import sequelize from "../Config/Config.js";
 import bcrypt from "bcrypt";
+
+import {
+  api_graphcomparative,
+  api_acaos,
+  api_respostas,
+  api_users,
+  api_datas,
+  api_acompanhamentos,
+} from "../Models/index.js";
 
 class AdminController {
   static deleteUser = async (req, res) => {
@@ -64,6 +73,40 @@ class AdminController {
         ],
       })
       .then((data) => res.status(200).json(data));
+  };
+
+  static restart = async (req, res) => {
+    const { id, data } = req.body;
+    var body = { finalizou: null, finalizou_acompanhamento: null };
+
+    sequelize
+      .transaction(async (transaction) => {
+        api_users.update(body, { where: { id: 1 } });
+
+        api_respostas.destroy({
+          where: { id_user: id, data: data },
+        });
+
+        api_graphcomparative.destroy({
+          where: { id_user: id, dataReferencia: data },
+        });
+
+        api_datas.destroy({
+          where: { id_user: id, data: data },
+        });
+
+        api_acaos.destroy({
+          where: { id_user: id, data: data },
+        });
+
+        api_acompanhamentos.destroy({
+          where: { id_user: id, data: data },
+        });
+      })
+      .then((content) => res.status(200).send(true))
+      .catch((err) => {
+        res.status(400).send("Ocorreu erro interno, tente novamente!");
+      });
   };
 }
 
