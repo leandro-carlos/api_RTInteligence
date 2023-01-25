@@ -20,6 +20,15 @@ api_graphcomparative.belongsTo(api_respostas, {
   onUpdate: "CASCADE",
 });
 
+// api_users.belongsToMany(api_respostas, {
+//   through: "apiRespostas",
+//   as: "respostas",
+//   foreignKey: "id_user",
+//   otherKey: "userID",
+//   onDelete: "CASCADE",
+//   onUpdate: "CASCADE",
+// });
+
 sequelize
   .sync()
   .then(() => {

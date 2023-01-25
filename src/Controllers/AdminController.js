@@ -14,18 +14,35 @@ class AdminController {
   static deleteUser = async (req, res) => {
     const { id } = req.body;
 
-    api_users
-      .destroy({
-        where: { id: id },
-        force: true,
+    sequelize
+      .transaction(async (transaction) => {
+        api_respostas.destroy({
+          where: { id_user: id },
+        });
+
+        api_graphcomparative.destroy({
+          where: { id_user: id },
+        });
+
+        api_datas.destroy({
+          where: { id_user: id },
+        });
+
+        api_acaos.destroy({
+          where: { id_user: id },
+        });
+
+        api_acompanhamentos.destroy({
+          where: { id_user: id },
+        });
       })
-      .then((content) => {
+      .then((content) =>
         res
           .status(200)
-          .send({ status: true, msg: "Usuario excluido com sucesso" });
-      })
+          .send({ status: true, msg: "Dados excluído com sucesso!" })
+      )
       .catch((err) => {
-        res.send({ status: false, msg: "Deu erro" });
+        res.status(400).send("Ocorreu erro interno, tente novamente!");
       });
   };
 
@@ -103,7 +120,11 @@ class AdminController {
           where: { id_user: id, data: data },
         });
       })
-      .then((content) => res.status(200).send(true))
+      .then((content) =>
+        res
+          .status(200)
+          .send({ status: true, msg: "Dados resetados com sucesso!" })
+      )
       .catch((err) => {
         res.status(400).send("Ocorreu erro interno, tente novamente!");
       });
