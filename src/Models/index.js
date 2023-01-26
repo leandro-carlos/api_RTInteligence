@@ -6,12 +6,28 @@ import api_datas from "./datas.js";
 import api_perguntas from "./Perguntas.js";
 import api_respostas from "./Respostas.js";
 import api_users from "./User.js";
+import api_graphcomparative from "./Comparative.js";
 
 api_respostas.belongsTo(api_perguntas, {
   foreignKey: "id_categoria",
   onDelete: "CASCADE",
   onUpdate: "CASCADE",
 });
+
+api_graphcomparative.belongsTo(api_respostas, {
+  foreignKey: "id_user",
+  onDelete: "CASCADE",
+  onUpdate: "CASCADE",
+});
+
+// api_users.belongsToMany(api_respostas, {
+//   through: "apiRespostas",
+//   as: "respostas",
+//   foreignKey: "id_user",
+//   otherKey: "userID",
+//   onDelete: "CASCADE",
+//   onUpdate: "CASCADE",
+// });
 
 sequelize
   .sync()
@@ -27,4 +43,5 @@ export {
   api_perguntas,
   api_respostas,
   api_users,
+  api_graphcomparative,
 };
