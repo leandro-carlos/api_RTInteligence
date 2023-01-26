@@ -35,6 +35,10 @@ class AdminController {
         api_acompanhamentos.destroy({
           where: { id_user: id },
         });
+
+        api_users.destroy({
+          where: { id: id },
+        });
       })
       .then((content) =>
         res
