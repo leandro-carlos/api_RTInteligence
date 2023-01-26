@@ -98,7 +98,7 @@ class AdminController {
 
     sequelize
       .transaction(async (transaction) => {
-        api_users.update(body, { where: { id: 1 } });
+        api_users.update(body, { where: { id: id } });
 
         api_respostas.destroy({
           where: { id_user: id, data: data },
