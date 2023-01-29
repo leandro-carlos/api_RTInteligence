@@ -2,39 +2,39 @@ function helpeData(data) {
   let body = "";
   if (data.getDate() < 10 && data.getMonth() < 10) {
     body =
-      `${data?.getFullYear()}/` +
+      `0${data?.getDate()}/` +
       `0${data?.getMonth() + 1}/` +
-      `0${data?.getDate()}`;
+      `${data?.getFullYear()}`;
   } else if (data.day < 10) {
     body =
-      `${data?.getFullYear()}/` +
+      `0${data?.getDate()}/` +
       `${data?.getMonth() + 1}/` +
-      `0${data?.getDate()}`;
+      `${data?.getFullYear()}`;
   } else if (data.month < 10) {
     body =
-      `${data?.getFullYear()}/` +
+      `${data?.getDate()}/` +
       `0${data?.getMonth() + 1}/` +
-      `${data?.getDate()}`;
+      `${data?.getFullYear()}`;
   } else if (data.getDate() == 10 && data.getMonth() < 10) {
     body =
-      `${data?.getFullYear()}/` +
+      `${data?.getDate()}/` +
       `0${data?.getMonth() + 1}/` +
-      `${data?.getDate()}`;
+      `${data?.getFullYear()}`;
   } else if (data.getDate() == 10 && data.getMonth() > 10) {
     body =
-      `${data?.getFullYear()}/` +
+      `${data?.getDate()}/` +
       `${data?.getMonth() + 1}/` +
-      `${data?.getDate()}`;
+      `${data?.getFullYear()}`;
   } else if (data.getDate() > 10 && data.getMonth() < 10) {
     body =
-      `${data?.getFullYear()}/` +
+      `${data?.getDate()}/` +
       `0${data?.getMonth() + 1}/` +
-      `${data?.getDate()}`;
+      `${data?.getFullYear()}`;
   } else {
     body =
-      `${data?.getFullYear()}/` +
+      `${data?.getDate()}/` +
       `${data?.getMonth() + 1}/` +
-      `${data?.getDate()}`;
+      `${data?.getFullYear()}`;
   }
   return body;
 }
