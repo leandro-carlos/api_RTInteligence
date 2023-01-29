@@ -1,19 +1,17 @@
 import sequelize from "../Config/Config.js";
 import { api_acompanhamentos, api_acaos, api_users } from "../Models/index.js";
+import helpeData from "../helpers/helperDayFunction.js";
 
 class AcaoController {
   static answerAction = async (req, res) => {
     const data = req.body;
     const newdate = new Date();
-    const date = `${newdate.getDate()}/${
-      newdate.getMonth() + 1
-    }/${newdate.getFullYear()}`;
 
     let bodyAcao = {
       id_user: data.id_user,
       name_categoria: data.name_categoria,
       descricao_categoria: data.descricao_categoria,
-      data: date,
+      data: helpeData(newdate),
     };
 
     const dateMonthYear = `${newdate.getMonth() + 1}/${newdate.getFullYear()}`;
@@ -22,7 +20,10 @@ class AcaoController {
       .findOne({ where: { id: data.id_user }, attributes: ["finalizou"] })
       .then((item) => {
         if (item.dataValues.finalizou == dateMonthYear) {
-          res.status(200).send(false);
+          res.status(200).json({
+            status: false,
+            msg: "Você já respondeu o ação e o quiz esse mês, tente novamente no próximo.",
+          });
         } else {
           sequelize
             .transaction(async (transaction) => {
@@ -32,9 +33,16 @@ class AcaoController {
                 { where: { id: data.id_user } }
               );
             })
-            .then((content) => res.status(200).send(true))
+            .then((content) =>
+              res
+                .status(200)
+                .json({ status: true, msg: "Dados inseridos com sucesso!" })
+            )
             .catch((err) => {
-              res.status(400).send("Ocorreu erro interno, tente novamente!");
+              res.status(400).json({
+                status: false,
+                msg: "Ocorreu erro interno, tente novamente!",
+              });
             });
         }
       });
@@ -44,9 +52,6 @@ class AcaoController {
     const data = req.body;
 
     const newdate = new Date();
-    const date = `${newdate.getDate()}/${
-      newdate.getMonth() + 1
-    }/${newdate.getFullYear()}`;
 
     const dateMonthYear = `${newdate.getMonth() + 1}/${newdate.getFullYear()}`;
 
@@ -64,9 +69,6 @@ class AcaoController {
         attributes: ["finalizou_acompanhamento"],
       })
       .then((item) => {
-        // if (item.dataValues.finalizou_acompanhamento == data.data) {
-        // res.status(200).send(false);
-        // } else {
         sequelize
           .transaction(async (transaction) => {
             api_acompanhamentos.create(bodyAcompanhamento);
@@ -75,38 +77,19 @@ class AcaoController {
               { where: { id: data.id_user } }
             );
           })
-          .then((content) => res.status(200).send(true))
+          .then((content) =>
+            res
+              .status(200)
+              .json({ status: true, msg: "Dados inseridos com sucesso!" })
+          )
           .catch((err) => {
-            res.status(400).send("Ocorreu erro interno, tente novamente!");
+            res.status(400).json({
+              status: false,
+              msg: "Ocorreu erro interno, tente novamente!",
+            });
           });
-        // }
       });
   };
-
-  // static testeUp = async (req, res) => {
-  //   const { id_user } = req.body;
-
-  //   const newdate = new Date();
-  //   const date = `${newdate.getMonth() + 1}/${newdate.getFullYear()}`;
-  // };
-
-  // static getActionAndFollowUp = async (req, res) => {
-  //   try {
-  //     const { id_user, data } = req.body;
-  //     let acao = {};
-  //     let acompanhamento = {};
-  //     api_acaos
-  //       .findAll({
-  //         where: { id_user: id_user, data: data },
-  //       })
-  //       .then((data) => (acao = data));
-  //     api_acompanhamentos
-  //       .findAll({ where: { id_user: id_user, data: data } })
-  //       .then((data) => (acompanhamento = data));
-
-  //     return res.status(200).json(acao, acompanhamento);
-  //   } catch (error) {}
-  // };
 }
 
 export default AcaoController;

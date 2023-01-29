@@ -6,6 +6,7 @@ import { api_datas } from "../Models/index.js";
 import { api_perguntas } from "../Models/index.js";
 import { api_respostas } from "../Models/index.js";
 import { api_graphcomparative } from "../Models/index.js";
+import heleDate from "../helpers/helperDayFunction.js";
 
 class PerguntasController {
   static getAllQuestions = async (req, res) => {
@@ -24,14 +25,16 @@ class PerguntasController {
       return await api_datas
         .findAll({ where: { id_user: id_user }, attributes: ["data"] })
         .then((data) => res.status(200).send(data));
-    } catch (error) {}
+    } catch (error) { }
   };
 
   static replyQuiz = async (req, res) => {
     const newdate = new Date();
-    const data = `${newdate.getDate()}/${
-      newdate.getMonth() + 1
-    }/${newdate.getFullYear()}`;
+    // const data = `${newdate.getDate()}/${
+    //   newdate.getMonth() + 1
+    // }/${newdate.getFullYear()}`;
+
+    const data = heleDate(newdate)
 
     const { id_user } = req.body;
 
@@ -118,7 +121,7 @@ class PerguntasController {
   static getComparative = async (req, res) => {
     const { id_user } = req.body;
 
-    const eightMonthsAgo = new Date(new Date() - 8 * 30 * 24 * 60 * 60 * 1000);
+    const eightMonthsAgo = new Date(new Date() - 8 * 30 * 24 * 60 * 60 * 1000); // Calculo pra 8 meses atrás
 
     api_graphcomparative
       .findAll({
