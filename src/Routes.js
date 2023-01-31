@@ -19,10 +19,8 @@ routes.get("/getAllQuestions", PerguntasController.getAllQuestions); // Listar t
 
 // Route of action
 
-routes.post("/replyQuiz", AcaoController.replyQuiz); // Responder cada pergunta do questionario.
-routes.post("/answerAction", AcaoController.answerAction); // reply a action (with goal) and the 3 follow up (3 text input)
 routes.post("/answerFollower", AcaoController.answerFollower); // reply a action (with goal) and the 3 follow up (3 text input)
-routes.post("/teste", AcaoController.teste); // reply a action (with goal) and the 3 follow up (3 text input)
+routes.post("/answerQuizAndAction", AcaoController.answerQuizAndAction); // reply a action (with goal) and the 3 follow up (3 text input)
 
 // Route of Result
 
