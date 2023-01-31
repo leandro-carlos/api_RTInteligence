@@ -6,7 +6,6 @@ import { api_datas } from "../Models/index.js";
 import { api_perguntas } from "../Models/index.js";
 import { api_respostas } from "../Models/index.js";
 import { api_graphcomparative } from "../Models/index.js";
-import heleDate from "../helpers/helperDayFunction.js";
 
 class PerguntasController {
   static getAllQuestions = async (req, res) => {
@@ -25,43 +24,7 @@ class PerguntasController {
       return await api_datas
         .findAll({ where: { id_user: id_user }, attributes: ["data"] })
         .then((data) => res.status(200).send(data));
-    } catch (error) { }
-  };
-
-  static replyQuiz = async (req, res) => {
-    const newdate = new Date();
-    // const data = `${newdate.getDate()}/${
-    //   newdate.getMonth() + 1
-    // }/${newdate.getFullYear()}`;
-
-    const data = heleDate(newdate)
-
-    const { id_user } = req.body;
-
-    let nota = 0;
-
-    api_datas
-      .create({
-        id_user: id_user,
-        data: data,
-      })
-      .then(() => {
-        req.body.resp.map(async (item) => {
-          const body = {
-            id_user: id_user,
-            id_categoria: item.id_categoria,
-            nivel: item.nivel,
-            data: data,
-          };
-
-          nota += item.nivel;
-          api_respostas.create(body);
-        });
-
-        api_graphcomparative
-          .create({ id_user: id_user, nota: nota, dataReferencia: data })
-          .then(() => res.status(200).send(true));
-      });
+    } catch (error) {}
   };
 
   static dataToGraph = async (req, res) => {

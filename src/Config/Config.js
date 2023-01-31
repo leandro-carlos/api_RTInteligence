@@ -1,37 +1,12 @@
-// // Conexão com banco de dado
-
-// import { Sequelize } from "sequelize";
-
-// const sequelize = new Sequelize("rtinteligence", "root", "", {
-//   host: "localhost",
-//   dialect: "mysql",
-//   storage: "C:/Users/leand/OneDrive/Desktop/NLW_Gamer",
-// });
-
-// try {
-//   sequelize
-//     .authenticate()
-//     .then((res) =>
-//       console.log("Connection has been established successfully.")
-//     );
-// } catch (err) {
-//   console.error("Unable to connect to the database: ", err);
-// }
-
-// export default sequelize;
+// Conexão com banco de dado
 
 import { Sequelize } from "sequelize";
 
-const sequelize = new Sequelize(
-  "rtinteligence",
-  "intelligenceAdm",
-  "intelligence147258369",
-  {
-    host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
-    dialect: "mysql",
-    // storage: "C:/Users/leand/OneDrive/Desktop/NLW_Gamer",
-  }
-);
+const sequelize = new Sequelize("rtinteligence", "root", "", {
+  host: "localhost",
+  dialect: "mysql",
+  storage: "C:/Users/leand/OneDrive/Desktop/NLW_Gamer",
+});
 
 try {
   sequelize
@@ -44,3 +19,28 @@ try {
 }
 
 export default sequelize;
+
+// import { Sequelize } from "sequelize";
+
+// const sequelize = new Sequelize(
+//   "rtinteligence",
+//   "intelligenceAdm",
+//   "intelligence147258369",
+//   {
+//     host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
+//     dialect: "mysql",
+//     // storage: "C:/Users/leand/OneDrive/Desktop/NLW_Gamer",
+//   }
+// );
+
+// try {
+//   sequelize
+//     .authenticate()
+//     .then((res) =>
+//       console.log("Connection has been established successfully.")
+//     );
+// } catch (err) {
+//   console.error("Unable to connect to the database: ", err);
+// }
+
+// export default sequelize;
