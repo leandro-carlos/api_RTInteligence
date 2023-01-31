@@ -56,7 +56,10 @@ class LoginController {
             });
           });
       } else {
-        res.status(418).send("Email já existe no banco");
+        res.status(200).json({
+          status: false,
+          msg: "Email já cadastrado no banco de dados, tente outro.",
+        });
       }
     });
   };
