@@ -20,9 +20,10 @@ class PerguntasController {
 
   static dates = async (req, res) => {
     const { id_user } = req.body;
+
     try {
       return await api_datas
-        .findAll({ where: { id_user: id_user }, attributes: ["data"] })
+        .findAll({ where: { id_user: id_user }, attributes: ["data", "id"] })
         .then((data) => res.status(200).send(data));
     } catch (error) {}
   };
