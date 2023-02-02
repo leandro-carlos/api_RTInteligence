@@ -6,10 +6,10 @@ import { api_datas } from "../Models/index.js";
 import { api_perguntas } from "../Models/index.js";
 import { api_respostas } from "../Models/index.js";
 import { api_graphcomparative } from "../Models/index.js";
-import heleDate from "../helpers/helperDayFunction.js";
 
 class PerguntasController {
   static getAllQuestions = async (req, res) => {
+    // retorna todas as perguntas e categorias
     try {
       return await api_perguntas
         .findAll()
@@ -21,50 +21,16 @@ class PerguntasController {
 
   static dates = async (req, res) => {
     const { id_user } = req.body;
+
     try {
       return await api_datas
-        .findAll({ where: { id_user: id_user }, attributes: ["data"] })
+        .findAll({ where: { id_user: id_user }, attributes: ["data", "id"] })
         .then((data) => res.status(200).send(data));
-    } catch (error) { }
-  };
-
-  static replyQuiz = async (req, res) => {
-    const newdate = new Date();
-    // const data = `${newdate.getDate()}/${
-    //   newdate.getMonth() + 1
-    // }/${newdate.getFullYear()}`;
-
-    const data = heleDate(newdate)
-
-    const { id_user } = req.body;
-
-    let nota = 0;
-
-    api_datas
-      .create({
-        id_user: id_user,
-        data: data,
-      })
-      .then(() => {
-        req.body.resp.map(async (item) => {
-          const body = {
-            id_user: id_user,
-            id_categoria: item.id_categoria,
-            nivel: item.nivel,
-            data: data,
-          };
-
-          nota += item.nivel;
-          api_respostas.create(body);
-        });
-
-        api_graphcomparative
-          .create({ id_user: id_user, nota: nota, dataReferencia: data })
-          .then(() => res.status(200).send(true));
-      });
+    } catch (error) {}
   };
 
   static dataToGraph = async (req, res) => {
+    // Dados pro resultado (nota + categoria + cor da categoria)
     const { id, data } = req.body;
     let calculo = 0;
 
@@ -101,6 +67,7 @@ class PerguntasController {
   };
 
   static getActionAndFollow = async (req, res) => {
+    // retorna resposta do açao e acompanhamento
     try {
       const { id_user, data } = req.body;
 
@@ -119,6 +86,7 @@ class PerguntasController {
   };
 
   static getComparative = async (req, res) => {
+    // Gráfico comparativo
     const { id_user } = req.body;
 
     const eightMonthsAgo = new Date(new Date() - 8 * 30 * 24 * 60 * 60 * 1000); // Calculo pra 8 meses atrás

@@ -7,12 +7,18 @@ class LoginController {
     const { email, password } = req.body;
 
     try {
+      // Recupera o email digitado e busca no banco
       const emailExist = await api_users.findAll({ where: { email: email } });
+
+      // pega a senha digita, encriptografa
+      // e valida se é a mesma senha digitada no bd.
 
       const match = await bcrypt.compare(
         password,
         emailExist[0]?.dataValues.password
       );
+
+      // Se ambos campos email e senha for true, efetua logi, se não da erro.
 
       if (emailExist && match) {
         delete emailExist[0].dataValues["updatedAt"];
@@ -38,6 +44,9 @@ class LoginController {
       password: await bcrypt.hash(password, 8),
     };
 
+    //  Valida se o campo já existe no banco, se sim, retorna a msg
+    // Se não, cria o usuario
+
     await api_users.findOne({ where: { email: email } }).then((resposta) => {
       if (resposta == undefined) {
         api_users
@@ -56,10 +65,15 @@ class LoginController {
             });
           });
       } else {
-        res.status(418).send("Email já existe no banco");
+        res.status(200).json({
+          status: false,
+          msg: "Email já cadastrado no banco de dados, tente outro.",
+        });
       }
     });
   };
+
+  // função pra retornar a versão do backend -> aplicativo
 
   static checkVersion = async (req, res) => {
     res.status(200).json({ version: 1.0 });
