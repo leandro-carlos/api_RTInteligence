@@ -1,3 +1,6 @@
+// função criada pra mantermos um padrão nas datas que forem ser incluída no banco
+// dd/mm/yyyy
+
 function helpeData(data) {
   let body = "";
   if (data.getDate() < 10 && data.getMonth() < 10) {

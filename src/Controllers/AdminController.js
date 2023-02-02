@@ -14,6 +14,10 @@ class AdminController {
   static deleteUser = async (req, res) => {
     const { id } = req.body;
 
+    // Pegamos o id do usuario e excluimos em todas as tabelas
+    // todos os registros desse usuario
+    // função é feita todas ao mesmo tempo.
+
     sequelize
       .transaction(async (transaction) => {
         api_respostas.destroy({
@@ -99,6 +103,9 @@ class AdminController {
   static restart = async (req, res) => {
     const { id, data } = req.body;
     var body = { finalizou: null, finalizou_acompanhamento: null };
+
+    // Pegamos o id e a data passada pelo app
+    // e fazemos uma busca nas tabelas onde atende esses requisitos, e excluimos os registros.
 
     sequelize
       .transaction(async (transaction) => {

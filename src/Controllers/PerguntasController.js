@@ -9,6 +9,7 @@ import { api_graphcomparative } from "../Models/index.js";
 
 class PerguntasController {
   static getAllQuestions = async (req, res) => {
+    // retorna todas as perguntas e categorias
     try {
       return await api_perguntas
         .findAll()
@@ -29,6 +30,7 @@ class PerguntasController {
   };
 
   static dataToGraph = async (req, res) => {
+    // Dados pro resultado (nota + categoria + cor da categoria)
     const { id, data } = req.body;
     let calculo = 0;
 
@@ -65,6 +67,7 @@ class PerguntasController {
   };
 
   static getActionAndFollow = async (req, res) => {
+    // retorna resposta do açao e acompanhamento
     try {
       const { id_user, data } = req.body;
 
@@ -83,6 +86,7 @@ class PerguntasController {
   };
 
   static getComparative = async (req, res) => {
+    // Gráfico comparativo
     const { id_user } = req.body;
 
     const eightMonthsAgo = new Date(new Date() - 8 * 30 * 24 * 60 * 60 * 1000); // Calculo pra 8 meses atrás

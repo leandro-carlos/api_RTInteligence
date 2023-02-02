@@ -1,11 +1,11 @@
-// // Conexão com banco de dado
+// esse arquivo serve pra conexão com o banco de dados, onde tem o banco local e o banco de prod
+// passamos como parametros: nome do bd, password, e link do bd.
 
 // import { Sequelize } from "sequelize";
 
 // const sequelize = new Sequelize("rtinteligence", "root", "", {
 //   host: "localhost",
 //   dialect: "mysql",
-//   storage: "C:/Users/leand/OneDrive/Desktop/NLW_Gamer",
 // });
 
 // try {
@@ -29,7 +29,6 @@ const sequelize = new Sequelize(
   {
     host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
     dialect: "mysql",
-    // storage: "C:/Users/leand/OneDrive/Desktop/NLW_Gamer",
   }
 );
 

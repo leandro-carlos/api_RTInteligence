@@ -11,6 +11,9 @@ import helpeData from "../helpers/helperDayFunction.js";
 
 class AcaoController {
   static answerFollower = async (req, res) => {
+    // Responder acompanhamento
+    // esperamos como corpo, o id do user + as respostas.
+
     const data = req.body;
 
     const newdate = new Date();
