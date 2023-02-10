@@ -14,12 +14,6 @@ api_respostas.belongsTo(api_perguntas, {
   onUpdate: "CASCADE",
 });
 
-api_graphcomparative.belongsTo(api_respostas, {
-  foreignKey: "id_user",
-  onDelete: "CASCADE",
-  onUpdate: "CASCADE",
-});
-
 sequelize
   .sync()
   .then(() => {
