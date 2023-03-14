@@ -1,7 +1,7 @@
 // esse arquivo serve pra conexão com o banco de dados, onde tem o banco local e o banco de prod
 // passamos como parametros: nome do bd, password, e link do bd.
 
-// import { Sequelize } from "sequelize";
+// const { Sequelize } from "sequelize";
 
 // const sequelize = new Sequelize("rtinteligence", "root", "", {
 //   host: "localhost",
@@ -20,14 +20,24 @@
 
 // export default sequelize;
 
-import { Sequelize } from "sequelize";
+const { Sequelize } = require("sequelize");
+
+// const sequelize = new Sequelize(
+//   "rtinteligence",
+//   "AdminBdGrattus",
+//   "###GrattusdbrtIntelligence2023",
+//   {
+//     host: "database-1.cgxqc3ashbq8.sa-east-1.rds.amazonaws.com",
+//     dialect: "mysql",
+//   }
+// );
 
 const sequelize = new Sequelize(
   "rtinteligence",
-  "AdminBdGrattus",
-  "###GrattusdbrtIntelligence2023",
+  "intelligenceAdm",
+  "intelligence147258369",
   {
-    host: "database-1.cgxqc3ashbq8.sa-east-1.rds.amazonaws.com",
+    host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
     dialect: "mysql",
   }
 );
@@ -42,4 +52,4 @@ try {
   console.error("Unable to connect to the database: ", err);
 }
 
-export default sequelize;
+module.exports = sequelize;

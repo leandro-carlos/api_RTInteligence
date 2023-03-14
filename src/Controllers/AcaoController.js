@@ -1,13 +1,13 @@
-import sequelize from "../Config/Config.js";
-import {
+const sequelize = require("../Config/Config.js");
+const {
   api_acompanhamentos,
   api_acaos,
   api_users,
   api_datas,
   api_respostas,
   api_graphcomparative,
-} from "../Models/index.js";
-import helpeData from "../helpers/helperDayFunction.js";
+} = require("../Models/index.js");
+const helpeData = require("../helpers/helperDayFunction.js");
 
 class AcaoController {
   static answerFollower = async (req, res) => {
@@ -127,4 +127,4 @@ class AcaoController {
   };
 }
 
-export default AcaoController;
+module.exports = AcaoController;

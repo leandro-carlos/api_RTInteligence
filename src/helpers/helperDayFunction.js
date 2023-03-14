@@ -42,4 +42,4 @@ function helpeData(data) {
   return body;
 }
 
-export default helpeData;
+module.exports = helpeData;

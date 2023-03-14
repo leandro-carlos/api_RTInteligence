@@ -1,5 +1,5 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../Config/Config.js";
+const { DataTypes } = require("sequelize");
+const sequelize = require("../Config/Config.js");
 
 const api_acompanhamentos = sequelize.define("api_acompanhamentos", {
   id: {
@@ -16,4 +16,4 @@ const api_acompanhamentos = sequelize.define("api_acompanhamentos", {
   updatedAt: { type: DataTypes.TIME },
 });
 
-export default api_acompanhamentos;
+module.exports = api_acompanhamentos;

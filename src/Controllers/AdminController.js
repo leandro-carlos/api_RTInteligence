@@ -1,14 +1,14 @@
-import sequelize from "../Config/Config.js";
-import bcrypt from "bcrypt";
+const sequelize = require("../Config/Config.js");
+const bcrypt = require("bcrypt");
 
-import {
+const {
   api_graphcomparative,
   api_acaos,
   api_respostas,
   api_users,
   api_datas,
   api_acompanhamentos,
-} from "../Models/index.js";
+} = require("../Models/index.js");
 
 class AdminController {
   static deleteUser = async (req, res) => {
@@ -142,4 +142,4 @@ class AdminController {
   };
 }
 
-export default AdminController;
+module.exports = AdminController;

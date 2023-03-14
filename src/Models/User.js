@@ -1,5 +1,5 @@
-import { Sequelize, Model, DataTypes } from "sequelize";
-import sequelize from "../Config/Config.js";
+const { Sequelize, Model, DataTypes } = require("sequelize");
+const sequelize = require("../Config/Config.js");
 
 const api_users = sequelize.define("api_users", {
   id: { type: DataTypes.INTEGER, primaryKey: true, autoIncrement: true },
@@ -11,4 +11,4 @@ const api_users = sequelize.define("api_users", {
   finalizou_acompanhamento: { type: DataTypes.STRING, defaultValue: "" },
 });
 
-export default api_users;
+module.exports = api_users;

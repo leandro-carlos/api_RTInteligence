@@ -1,12 +1,12 @@
-import sequelize from "../Config/Config.js";
+const sequelize = require("../Config/Config.js");
 
-import api_acaos from "./Acao.js";
-import api_acompanhamentos from "./Acompanhamento.js";
-import api_datas from "./datas.js";
-import api_perguntas from "./Perguntas.js";
-import api_respostas from "./Respostas.js";
-import api_users from "./User.js";
-import api_graphcomparative from "./Comparative.js";
+const api_acaos = require("./Acao.js");
+const api_acompanhamentos = require("./Acompanhamento.js");
+const api_datas = require("./datas.js");
+const api_perguntas = require("./Perguntas.js");
+const api_respostas = require("./Respostas.js");
+const api_users = require("./User.js");
+const api_graphcomparative = require("./Comparative.js");
 
 api_respostas.belongsTo(api_perguntas, {
   foreignKey: "id_categoria",
@@ -21,7 +21,7 @@ sequelize
   })
   .catch((error) => console.error("Unable to create table : ", error));
 
-export {
+module.exports = {
   api_acaos,
   api_acompanhamentos,
   api_datas,

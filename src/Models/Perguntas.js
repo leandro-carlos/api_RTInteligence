@@ -1,5 +1,5 @@
-import { DataTypes } from "sequelize";
-import sequelize from "../Config/Config.js";
+const { DataTypes } = require("sequelize");
+const sequelize = require("../Config/Config.js");
 
 const api_perguntas = sequelize.define("api_perguntas", {
   id_categoria: {
@@ -12,4 +12,4 @@ const api_perguntas = sequelize.define("api_perguntas", {
   cor: { type: DataTypes.STRING },
 });
 
-export default api_perguntas;
+module.exports = api_perguntas;

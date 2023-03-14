@@ -1,11 +1,11 @@
-import sequelize from "../Config/Config.js";
-import { Op } from "sequelize";
-import { api_acaos } from "../Models/index.js";
-import { api_acompanhamentos } from "../Models/index.js";
-import { api_datas } from "../Models/index.js";
-import { api_perguntas } from "../Models/index.js";
-import { api_respostas } from "../Models/index.js";
-import { api_graphcomparative } from "../Models/index.js";
+const sequelize = require("../Config/Config.js");
+const { Op } = require("sequelize");
+const { api_acaos } = require("../Models/index.js");
+const { api_acompanhamentos } = require("../Models/index.js");
+const { api_datas } = require("../Models/index.js");
+const { api_perguntas } = require("../Models/index.js");
+const { api_respostas } = require("../Models/index.js");
+const { api_graphcomparative } = require("../Models/index.js");
 
 class PerguntasController {
   static getAllQuestions = async (req, res) => {
@@ -123,4 +123,4 @@ class PerguntasController {
   };
 }
 
-export default PerguntasController;
+module.exports = PerguntasController;

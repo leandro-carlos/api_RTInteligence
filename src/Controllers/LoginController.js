@@ -1,5 +1,5 @@
-import api_users from "../Models/User.js";
-import bcrypt from "bcrypt";
+const api_users = require("../Models/User.js");
+const bcrypt = require("bcrypt");
 
 class LoginController {
   // pronta -> tratar erros só (quando)
@@ -80,4 +80,4 @@ class LoginController {
   };
 }
 
-export default LoginController;
+module.exports = LoginController;

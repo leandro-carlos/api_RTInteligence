@@ -1,14 +1,14 @@
-import { Router } from "express";
+const { Router } = require("express");
 
 // Controladores
 
-import LoginController from "./Controllers/LoginController.js";
-import PerguntasController from "./Controllers/PerguntasController.js";
-import AcaoController from "./Controllers/AcaoController.js";
-import AdminController from "./Controllers/AdminController.js";
+const LoginController = require("./Controllers/LoginController.js");
+const PerguntasController = require("./Controllers/PerguntasController.js");
+const AcaoController = require("./Controllers/AcaoController.js");
+const AdminController = require("./Controllers/AdminController.js");
+const VideoCallController = require("./Controllers/VideoCallController.js");
 
 const routes = new Router();
-
 // Route of user
 
 routes.post("/login", LoginController.login); // Logar
@@ -43,4 +43,6 @@ routes.post("/restart", AdminController.restart); // Reinicia o questionario do 
 
 routes.get("/checkVersion", LoginController.checkVersion); // Checkar versão do app + api
 
-export default routes;
+// Route Video Call
+routes.post("/token", VideoCallController.getVideoToken); //Pegar token para entrar em video call.
+module.exports = routes;

@@ -1,5 +1,5 @@
-import sequelize from "../Config/Config.js";
-import { DataTypes } from "sequelize";
+const sequelize = require("../Config/Config.js");
+const { DataTypes } = require("sequelize");
 
 const api_graphcomparative = sequelize.define("api_graphcomparative", {
   id: {
@@ -12,4 +12,4 @@ const api_graphcomparative = sequelize.define("api_graphcomparative", {
   dataReferencia: { type: DataTypes.STRING },
 });
 
-export default api_graphcomparative;
+module.exports = api_graphcomparative;
