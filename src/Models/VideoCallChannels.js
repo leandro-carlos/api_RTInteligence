@@ -6,6 +6,7 @@ const api_channels = sequelize.define("api_channels", {
   name: { type: DataTypes.STRING, allowNull: false },
   status: { type: DataTypes.STRING, allowNull: false, defaultValue: "offline" },
   usersOnline: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
+  minStart: { type: DataTypes.INTEGER, allowNull: true },
 });
 
 module.exports = api_channels;

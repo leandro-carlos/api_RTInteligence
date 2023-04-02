@@ -14,6 +14,8 @@ const role = RtcRole.PUBLISHER;
 const expirationTimeInSeconds = 133600;
 const currentTimestamp = Math.floor(Date.now() / 1000);
 const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
+const date = new Date();
+const min = date.getMinutes();
 
 class VideoCallController {
   static getVideoToken = async (req, res) => {
@@ -44,18 +46,28 @@ class VideoCallController {
           const channelWithTwoUsers = data.find(checkTwoUsers);
           if (channelWithTwoUsers !== undefined) {
             api_channels.update(
-              { usersOnline: 3 },
+              { usersOnline: 3, status: "online" },
               { where: { id: channelWithTwoUsers.dataValues.id } }
             );
             channelName = channelWithTwoUsers.dataValues.name;
           } else {
             const channelWithOneUser = data.find(checkOneUser);
             if (channelWithOneUser !== undefined) {
-              channelName = channelWithOneUser.dataValues.name;
               api_channels.update(
-                { usersOnline: 2 },
+                { usersOnline: 2, minStart: min },
                 { where: { id: channelWithOneUser.dataValues.id } }
               );
+              channelName = channelWithOneUser.dataValues.name;
+              setTimeout(() => {
+                api_channels.update(
+                  { usersOnline: 0, status: "offline", minStart: null },
+                  {
+                    where: {
+                      id: channelWithOneUser.dataValues.id,
+                    },
+                  }
+                );
+              }, 600000);
             } else {
               const channelWithZeroUsers = data.find(checkZeroUsers);
               if (channelWithZeroUsers !== undefined) {
@@ -65,23 +77,26 @@ class VideoCallController {
                   { where: { id: channelWithZeroUsers.dataValues.id } }
                 );
               } else {
-                return res.status(200).send("Não há canais disponiveis!");
+                return res.status(200).send({
+                  status: false,
+                  message: "não há canais disponiveis!",
+                });
               }
             }
           }
 
-          const tokenA = RtcTokenBuilder.buildTokenWithUid(
-            appId,
-            appCertificate,
-            channelName,
-            uid,
-            role,
-            privilegeExpiredTs
-          );
+          // const tokenA = RtcTokenBuilder.buildTokenWithUid(
+          //   appId,
+          //   appCertificate,
+          //   channelName,
+          //   uid,
+          //   role,
+          //   privilegeExpiredTs
+          // );
 
           res.status(200).send({
             channelName: channelName,
-            token: tokenA,
+            // token: tokenA,
           });
         })
         .catch((err) => {
@@ -97,7 +112,35 @@ class VideoCallController {
     }
   };
 
-  static reconect = async (req, res) => {};
+  static reconect = async (req, res) => {
+    console.log(req.body);
+    const name = req.body.channelName;
+    api_channels
+      .findOne({
+        where: {
+          name: name,
+        },
+      })
+      .then((data) => {
+        console.log(data);
+        if (data === null) {
+          return res.status(200).send("Canal não existe");
+        }
+        if (data.dataValues.minStart + 10 > min) {
+          res.status(200).send({
+            status: true,
+          });
+        } else {
+          res.status(200).send({
+            status: false,
+            message: "Tempo limite para se reconectar foi alcançado.",
+          });
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
 }
 
 module.exports = VideoCallController;

@@ -44,4 +44,5 @@ routes.get("/checkVersion", LoginController.checkVersion); // Checkar versão do
 
 // Route Video Call
 routes.post("/token", VideoCallController.getVideoToken); //Pegar token para entrar em video call.
+routes.post("/reconect", VideoCallController.reconect); // reconectar no canal caso naõ tenha passado x minutos.
 module.exports = routes;
