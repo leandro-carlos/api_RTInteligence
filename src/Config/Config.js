@@ -32,15 +32,20 @@ const { Sequelize } = require("sequelize");
 //   }
 // );
 
-const sequelize = new Sequelize(
-  "rtinteligence",
-  "intelligenceAdm",
-  "intelligence147258369",
-  {
-    host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
-    dialect: "mysql",
-  }
-);
+// const sequelize = new Sequelize(
+//   "rtinteligence",
+//   "intelligenceAdm",
+//   "intelligence147258369",
+//   {
+//     host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
+//     dialect: "mysql",
+//   }
+// );
+
+const sequelize = new Sequelize("rtinteligence", "root", "", {
+  host: "localhost",
+  dialect: "mysql",
+});
 
 try {
   sequelize

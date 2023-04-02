@@ -12,7 +12,6 @@ const routes = new Router();
 // Route of user
 
 routes.post("/login", LoginController.login); // Logar
-
 // Route of quiz
 
 routes.get("/getAllQuestions", PerguntasController.getAllQuestions); // Listar todas as perguntas e categorias
