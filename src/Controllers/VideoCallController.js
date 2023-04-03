@@ -14,8 +14,6 @@ const role = RtcRole.PUBLISHER;
 const expirationTimeInSeconds = 133600;
 const currentTimestamp = Math.floor(Date.now() / 1000);
 const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
-const date = new Date();
-const min = date.getMinutes();
 
 class VideoCallController {
   static getVideoToken = async (req, res) => {
@@ -54,7 +52,7 @@ class VideoCallController {
             const channelWithOneUser = data.find(checkOneUser);
             if (channelWithOneUser !== undefined) {
               api_channels.update(
-                { usersOnline: 2, minStart: min },
+                { usersOnline: 2 },
                 { where: { id: channelWithOneUser.dataValues.id } }
               );
               channelName = channelWithOneUser.dataValues.name;
@@ -123,17 +121,19 @@ class VideoCallController {
       })
       .then((data) => {
         console.log(data);
-        if (data === null) {
-          return res.status(200).send("Canal não existe");
-        }
-        if (data.dataValues.minStart + 10 > min) {
-          res.status(200).send({
-            status: true,
-          });
+        if (data !== null) {
+          if (data.dataValues.usersOnline > 0) {
+            res.status(200).send({
+              status: true,
+            });
+          } else {
+            res.status(200).send({
+              status: false,
+            });
+          }
         } else {
           res.status(200).send({
-            status: false,
-            message: "Tempo limite para se reconectar foi alcançado.",
+            status: "inexistente",
           });
         }
       })
