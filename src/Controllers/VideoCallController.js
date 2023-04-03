@@ -65,7 +65,7 @@ class VideoCallController {
                     },
                   }
                 );
-              }, 600000);
+              }, 420000);
             } else {
               const channelWithZeroUsers = data.find(checkZeroUsers);
               if (channelWithZeroUsers !== undefined) {
