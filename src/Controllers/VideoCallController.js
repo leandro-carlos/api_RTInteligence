@@ -56,7 +56,7 @@ class VideoCallController {
         .then((data) => {
           if (data.dataValues.usersOnline === 1) {
             api_channels.update(
-              { usersOnline: 0, status: "offline" },
+              { usersOnline: 0, status: "offline", startHour: null },
               { where: { id: id } }
             );
           } else {
@@ -81,7 +81,7 @@ class VideoCallController {
               { where: { id: channelWithTwoUsers.dataValues.id } }
             );
             channelName = channelWithTwoUsers.dataValues.name;
-            initialHour = channelWithTwoUsers.dataValues.initialHour;
+            initialHour = channelWithTwoUsers.dataValues.startHour;
           } else {
             const channelWithOneUser = data.find(checkOneUser);
             if (channelWithOneUser !== undefined) {
@@ -146,7 +146,7 @@ class VideoCallController {
             res.status(200).send({
               status: true,
               user: data.dataValues.usersOnline,
-              initialHour: data.dataValues.initialHour,
+              initialHour: data.dataValues.startHour,
               now: newDate,
             });
           } else {
