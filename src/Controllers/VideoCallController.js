@@ -25,6 +25,7 @@ class VideoCallController {
     let channelName;
     let initialHour;
     let user;
+    let now;
 
     function checkTwoUsers(obj) {
       return obj.usersOnline === 2;
@@ -83,6 +84,7 @@ class VideoCallController {
             );
             channelName = channelWithTwoUsers.dataValues.name;
             initialHour = channelWithTwoUsers.dataValues.startHour;
+            now = channelWithTwoUsers.dataValues.updatedAt;
             user = 3;
           } else {
             const channelWithOneUser = data.find(checkOneUser);
@@ -93,6 +95,7 @@ class VideoCallController {
               );
               channelName = channelWithOneUser.dataValues.name;
               initialHour = newDate;
+              now = channelWithOneUser.dataValues.updatedAt;
               user = 2;
               setTimeout(() => {
                 updateChannel(channelWithOneUser.dataValues.id);
@@ -102,6 +105,7 @@ class VideoCallController {
               if (channelWithZeroUsers !== undefined) {
                 channelName = channelWithZeroUsers.dataValues.name;
                 initialHour = newDate;
+                now = channelWithZeroUsers.dataValues.updatedAt;
                 user = 1;
                 api_channels.update(
                   { usersOnline: 1, startHour: newDate },
@@ -123,7 +127,7 @@ class VideoCallController {
             channelName: channelName,
             // token: tokenA,
             initialHour: initialHour,
-            now: newDate,
+            now: now,
             user: user,
           });
         })
