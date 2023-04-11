@@ -6,7 +6,7 @@ const api_channels = sequelize.define("api_channels", {
   name: { type: DataTypes.STRING, allowNull: false },
   status: { type: DataTypes.STRING, allowNull: false, defaultValue: "offline" },
   usersOnline: { type: DataTypes.INTEGER, allowNull: false, defaultValue: 0 },
-  startHour: { type: DataTypes.TIME, allowNull: true, defaultValue: null },
+  startHour: { type: DataTypes.DATE, allowNull: true, defaultValue: null },
 });
 
 module.exports = api_channels;

@@ -109,7 +109,7 @@ class VideoCallController {
                 );
                 setTimeout(() => {
                   updtadeAfkChannel(channelWithZeroUsers.dataValues.id);
-                }, 180000);
+                }, 240000);
               } else {
                 return res.status(200).send({
                   status: false,
