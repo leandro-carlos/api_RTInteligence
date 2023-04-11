@@ -84,7 +84,7 @@ class VideoCallController {
             );
             channelName = channelWithTwoUsers.dataValues.name;
             initialHour = channelWithTwoUsers.dataValues.startHour;
-            now = channelWithTwoUsers.dataValues.updatedAt;
+            now = newDate;
             user = 3;
           } else {
             const channelWithOneUser = data.find(checkOneUser);
@@ -94,8 +94,8 @@ class VideoCallController {
                 { where: { id: channelWithOneUser.dataValues.id } }
               );
               channelName = channelWithOneUser.dataValues.name;
-              initialHour = newDate;
-              now = channelWithOneUser.dataValues.updatedAt;
+              initialHour = channelWithOneUser.dataValues.startHour;
+              now = newDate;
               user = 2;
               setTimeout(() => {
                 updateChannel(channelWithOneUser.dataValues.id);
@@ -105,7 +105,7 @@ class VideoCallController {
               if (channelWithZeroUsers !== undefined) {
                 channelName = channelWithZeroUsers.dataValues.name;
                 initialHour = newDate;
-                now = channelWithZeroUsers.dataValues.updatedAt;
+                now = newDate;
                 user = 1;
                 api_channels.update(
                   { usersOnline: 1, startHour: newDate },
