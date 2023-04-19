@@ -18,9 +18,10 @@ const privilegeExpiredTs = currentTimestamp + expirationTimeInSeconds;
 const newDate = new Date();
 
 class VideoCallController {
-  static getVideoToken = async (req, res) => {
+  static getVideoToken = async (id) => {
     //connect
-    const uid = req.body.id;
+    const uid = id;
+    console.log(uid);
 
     let channelName;
     let initialHour;
@@ -115,21 +116,20 @@ class VideoCallController {
                   updtadeAfkChannel(channelWithZeroUsers.dataValues.id);
                 }, 240000);
               } else {
-                return res.status(200).send({
+                return {
                   status: false,
                   message: "não há canais disponiveis!",
-                });
+                };
               }
             }
           }
 
-          res.status(200).send({
+          return {
             channelName: channelName,
-            // token: tokenA,
             initialHour: initialHour,
             now: now,
             user: user,
-          });
+          };
         })
         .catch((err) => {
           console.log(err);

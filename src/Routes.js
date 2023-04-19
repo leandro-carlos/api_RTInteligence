@@ -43,6 +43,6 @@ routes.post("/restart", AdminController.restart); // Reinicia o questionario do 
 routes.get("/checkVersion", LoginController.checkVersion); // Checkar versão do app + api
 
 // Route Video Call
-routes.post("/token", VideoCallController.getVideoToken); //Pegar token para entrar em video call.
-routes.post("/reconect", VideoCallController.reconect); // reconectar no canal caso naõ tenha passado x minutos.
+// routes.post("/token", VideoCallController.getVideoToken); //Pegar token para entrar em video call.
+// routes.post("/reconect", VideoCallController.reconect); // reconectar no canal caso naõ tenha passado x minutos.
 module.exports = routes;
