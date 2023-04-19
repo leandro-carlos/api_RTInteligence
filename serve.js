@@ -61,8 +61,18 @@ wss.on("connection", function connection(ws, req) {
 
     generalInformation(ws);
   }
-  function leave(params) {}
+  function leave(params) {
+    const room = ws.room;
+    rooms[room] = rooms[room].filter((so) => so !== ws);
+    ws["room"] = undefined;
+
+    if (rooms[room].length == 0) close(room);
+  }
 });
+
+function close(room) {
+  rooms = rooms.filter((key) => key !== room);
+}
 
 function genKey(length) {
   let result = "";
