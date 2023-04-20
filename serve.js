@@ -13,7 +13,6 @@ let rooms = {};
 wss.on("connection", function connection(ws, req) {
   const parameters = url.parse(req.url, true);
   ws.uid = parameters.query.myCustomID;
-  ws.send(ws.uid);
 
   ws.on("message", function message(data) {
     const obj = JSON.parse(data);
@@ -21,39 +20,75 @@ wss.on("connection", function connection(ws, req) {
     const params = obj.params;
 
     switch (type) {
-      case "create":
-        create(params);
+      case "connect":
+        createOrJoin();
         break;
-      case "join":
-        join(params);
+      case "reconnect":
+        reconnect(params);
         break;
-      case "leave":
-        leave(params);
-        break;
+
       default:
         console.warn(`Type: ${type} unknown`);
         break;
     }
   });
 
-  function create(params) {
-    const room = genKey(5);
+  function createOrJoin() {
+    const keys = Object.keys(rooms);
+    const length = keys.length;
+    if (length === 0) {
+      return create();
+    }
+
+    // checkReconnect(length);
+
+    for (let i = 0; i < length; i++) {
+      if (rooms[keys[i]].length < maxClients) {
+        return join(keys[i]);
+      }
+    }
+
+    return create();
+  }
+
+  function reconnect(roomName) {
+    join(roomName);
+  }
+
+  function create() {
+    const room = genKey(8);
     rooms[room] = [ws];
     ws["room"] = room;
 
     generalInformation(ws);
   }
 
-  function join(params) {
-    const room = params.code;
+  function join(roomName) {
+    const room = roomName;
     if (!Object.keys(rooms).includes(room)) {
       console.warn(`Room ${room} does not exist!`);
+      createOrJoin();
       return;
     }
 
     if (rooms[room].length >= maxClients) {
       console.warn(`Room ${room} is full!`);
+      createOrJoin();
       return;
+    }
+
+    if (rooms[room].length >= maxClients - 1) {
+      rooms[room].push(ws);
+      ws["room"] = room;
+      const obj = {
+        status: true,
+        channelName: roomName,
+      };
+      return wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN && ws["room"] == roomName) {
+          client.send(JSON.stringify(obj));
+        }
+      });
     }
 
     rooms[room].push(ws);
@@ -61,6 +96,7 @@ wss.on("connection", function connection(ws, req) {
 
     generalInformation(ws);
   }
+
   function leave(params) {
     const room = ws.room;
     rooms[room] = rooms[room].filter((so) => so !== ws);
