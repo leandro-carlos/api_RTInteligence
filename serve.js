@@ -53,7 +53,7 @@ wss.on("connection", function connection(ws, req) {
 
   function createOrJoin() {
     //verifica se não existe nenhuma room e então cria uma.
-    console.log(" algum user entrou aqui");
+    console.log(" create or join");
     const keys = Object.keys(rooms);
     const length = keys.length;
     console.log(length);
@@ -110,8 +110,9 @@ wss.on("connection", function connection(ws, req) {
     // checa se o id do user já tinha sido atribuida a alguma sala e reconecta
     for (let i = 0; i < length; i++) {
       let namesRooms = rooms[keys[i]];
+
       if (namesRooms.length !== 0) {
-        for (let a = 0; a < length; a++) {
+        for (let a = 0; a < namesRooms.length; a++) {
           let target = namesRooms[a];
           // condição necessario pois a função de leave / cancel deixa uma propriedade com array vazio
           if (target.uid === ws.uid) {
