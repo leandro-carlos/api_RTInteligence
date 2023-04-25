@@ -9,9 +9,14 @@ const cron = require("node-cron");
 const port = 8080;
 
 const maxClients = 3;
-const newDate = new Date();
-const hours = newDate.getHours();
-const minutes = newDate.getMinutes();
+
+const threeMinutesWarn = "07 13 * * *";
+const oneMinuteWarn = "09 13 * * *";
+const closeCallsHour = "10 13 * * *";
+const videoSchedule = {
+  initialHour: 13,
+  finalMinute: 10,
+};
 
 let rooms = {};
 let totalUsersOnline = 0;
@@ -21,11 +26,7 @@ function resetRooms() {
 }
 
 wss.on("connection", function connection(ws, req) {
-  // if (hours !== 9 || minutes > 20) {
-  //   ws.close();
-  // }
-
-  const warnThreeMinutes = cron.schedule("17 9 * * *", () => {
+  const warnThreeMinutes = cron.schedule(threeMinutesWarn, () => {
     console.log("Executando warn 3");
     let obj = {
       type: "call_warn",
@@ -35,7 +36,7 @@ wss.on("connection", function connection(ws, req) {
     ws.send(JSON.stringify(obj));
   });
 
-  const warnOneMinute = cron.schedule("19 9 * * *", () => {
+  const warnOneMinute = cron.schedule(oneMinuteWarn, () => {
     console.log("Executando warn 1");
     let obj = {
       type: "call_warn",
@@ -45,7 +46,7 @@ wss.on("connection", function connection(ws, req) {
     ws.send(JSON.stringify(obj));
   });
 
-  const terminateAllCalls = cron.schedule("20 9 * * *", () => {
+  const terminateAllCalls = cron.schedule(closeCallsHour, () => {
     console.log("Executando terminate");
     let obj = {
       type: "call_warn",
@@ -64,6 +65,16 @@ wss.on("connection", function connection(ws, req) {
     const obj = JSON.parse(data);
     const type = obj.type;
     // obj com o type de conexão recebida
+    if (
+      hours !== videoSchedule.initialHour ||
+      minutes > videoSchedule.finalMinute
+    ) {
+      let obj = {
+        type: "message",
+        status: "CLOSED",
+      };
+      return send(obj);
+    }
 
     switch (type) {
       case "userOnline":
@@ -281,6 +292,7 @@ wss.on("connection", function connection(ws, req) {
   ws.on("close", () => {
     if (ws) {
       ws.close();
+      totalUsersOnline--;
       console.log("Conexão encerrada");
     }
   });
