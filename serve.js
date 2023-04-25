@@ -265,6 +265,7 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function checkCountDown() {
+    let newDate = new Date();
     let minutes = newDate.getMinutes();
     if (minutes === videoSchedule.finalMinute - 3) {
       let obj = {
