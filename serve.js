@@ -11,7 +11,7 @@ const maxClients = 3;
 const videoSchedule = {
   initialHour: 21,
   initialMinute: 0,
-  finalMinute: 10,
+  finalMinute: 40,
 };
 
 let rooms = {};
@@ -328,7 +328,7 @@ wss.on("connection", function connection(ws, req) {
 
       let obj = {
         type: "user_online",
-        totalUsersOnline: totalUsersOnline,
+        totalUsersOnline: clients.length,
       };
 
       wss.clients.forEach(function each(client) {
