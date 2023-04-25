@@ -14,10 +14,8 @@ const videoSchedule = {
   finalMinute: 10,
 };
 
-const newDate = new Date();
-
 let rooms = {};
-let totalUsersOnline = 0;
+let clients = [];
 
 function resetRooms() {
   return (rooms = {});
@@ -72,12 +70,15 @@ wss.on("connection", function connection(ws, req) {
       return;
     }
     ws.uid = id;
-    console.log("id saved", id);
-    totalUsersOnline++;
+
+    clients.push(ws);
+
     let obj = {
       type: "user_online",
-      totalUsersOnline: totalUsersOnline,
+      totalUsersOnline: clients.length,
     };
+
+    send();
 
     return wss.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {
@@ -102,10 +103,6 @@ wss.on("connection", function connection(ws, req) {
       };
       return send(obj);
     }
-
-    warnThreeMinutes.start();
-    warnOneMinute.start();
-    terminateAllCalls.start();
 
     //verifica se não existe nenhuma room e então cria uma.
     console.log(" create or join");
@@ -327,7 +324,7 @@ wss.on("connection", function connection(ws, req) {
   function close() {
     if (ws) {
       if (ws.uid) {
-        totalUsersOnline--;
+        clients.splice(clients.indexOf(ws), 1);
       }
 
       let obj = {
