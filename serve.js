@@ -71,7 +71,7 @@ wss.on("connection", function connection(ws, req) {
     ) {
       let obj = {
         type: "message",
-        status: "CLOSED",
+        status: "SHUTDOWN",
       };
       return send(obj);
     }
