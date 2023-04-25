@@ -303,7 +303,7 @@ wss.on("connection", function connection(ws, req) {
       warnOneMinute.stop();
       terminateAllCalls.stop();
       wss.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN) {
+        if (client.readyState === WebSocket.OPEN && !ws) {
           client.send(JSON.stringify(obj));
         }
       });
