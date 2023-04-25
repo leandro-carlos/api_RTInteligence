@@ -15,8 +15,6 @@ const videoSchedule = {
 };
 
 const newDate = new Date();
-const hours = newDate.getHours();
-const minutes = newDate.getMinutes();
 
 let rooms = {};
 let totalUsersOnline = 0;
@@ -89,6 +87,9 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function createOrJoin() {
+    let hours = newDate.getHours();
+    let minutes = newDate.getMinutes();
+
     if (
       hours !== videoSchedule.initialHour ||
       minutes > videoSchedule.finalMinute
@@ -268,6 +269,7 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function checkCountDown() {
+    let minutes = newDate.getMinutes();
     if (minutes === videoSchedule.finalMinute - 3) {
       let obj = {
         type: "call_warn",
