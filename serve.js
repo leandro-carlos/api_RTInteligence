@@ -4,6 +4,7 @@ const WebSocket = require("ws");
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 const url = require("url");
+const cron = require("node-cron");
 
 const port = 8080;
 
@@ -13,11 +14,47 @@ const hours = newDate.getHours();
 const minutes = newDate.getMinutes();
 
 let rooms = {};
+let totalUsersOnline = 0;
+
+function resetRooms() {
+  return (rooms = {});
+}
 
 wss.on("connection", function connection(ws, req) {
   // if (hours !== 9 || minutes > 20) {
   //   ws.close();
   // }
+
+  const warnThreeMinutes = cron.schedule("17 9 * * *", () => {
+    console.log("Executando warn 3");
+    let obj = {
+      type: "call_warn",
+      status: "COUNTDOWN_THREE",
+      timeleft: 3,
+    };
+    ws.send(JSON.stringify(obj));
+  });
+
+  const warnOneMinute = cron.schedule("19 9 * * *", () => {
+    console.log("Executando warn 1");
+    let obj = {
+      type: "call_warn",
+      status: "COUNTDOWN_ONE",
+      timeleft: 1,
+    };
+    ws.send(JSON.stringify(obj));
+  });
+
+  const terminateAllCalls = cron.schedule("20 9 * * *", () => {
+    console.log("Executando terminate");
+    let obj = {
+      type: "call_warn",
+      status: "SHUTDOWN",
+      timeleft: 0,
+    };
+    ws.send(JSON.stringify(obj));
+    resetRooms();
+  });
 
   // client conectado com o websocket
 
@@ -29,14 +66,18 @@ wss.on("connection", function connection(ws, req) {
     // obj com o type de conexão recebida
 
     switch (type) {
-      case "connect":
+      case "userOnline":
         saveId(obj.id);
+        break;
+
+      case "connect":
         createOrJoin();
         break;
 
       case "cancel":
         leave();
         break;
+
       default:
         console.warn(`Type: ${type} unknown`);
         break;
@@ -49,9 +90,24 @@ wss.on("connection", function connection(ws, req) {
     }
     ws.uid = id;
     console.log("id saved", id);
+    totalUsersOnline++;
+    let obj = {
+      type: "user_online",
+      totalUsersOnline: totalUsersOnline,
+    };
+
+    return wss.clients.forEach(function each(client) {
+      if (client.readyState === WebSocket.OPEN) {
+        client.send(JSON.stringify(obj));
+      }
+    });
   }
 
   function createOrJoin() {
+    warnThreeMinutes.start();
+    warnOneMinute.start();
+    terminateAllCalls.start();
+
     //verifica se não existe nenhuma room e então cria uma.
     console.log(" create or join");
     const keys = Object.keys(rooms);
@@ -100,6 +156,7 @@ wss.on("connection", function connection(ws, req) {
     const obj = {
       status: "WAITING_MORE_USERS",
       usersCount: 1,
+      type: "message",
     };
 
     ws.send(JSON.stringify(obj));
@@ -145,6 +202,7 @@ wss.on("connection", function connection(ws, req) {
     const obj = {
       status: "CALL_START_RECONNECT",
       channel: roomName,
+      type: "message",
     };
     send(obj);
   }
@@ -174,6 +232,7 @@ wss.on("connection", function connection(ws, req) {
         status: "CALL_START",
         usersCount: 3,
         channel: roomName,
+        type: "message",
       };
       return wss.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN && ws["room"] == roomName) {
@@ -190,6 +249,7 @@ wss.on("connection", function connection(ws, req) {
       obj = {
         status: "WAITING_MORE_USERS",
         usersCount: 2,
+        type: "message",
       };
       return wss.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN && ws["room"] == roomName) {
@@ -203,13 +263,14 @@ wss.on("connection", function connection(ws, req) {
       obj = {
         status: "WAITING_MORE_USERS",
         usersCount: 1,
+        type: "message",
       };
       send(obj);
     }
   }
 
   function leave() {
-    if (ws.room) {
+    if (ws.room && ws.status !== "onCall") {
       const room = ws.room;
       rooms[room] = rooms[room].filter((so) => so !== ws);
       ws["room"] = undefined;
