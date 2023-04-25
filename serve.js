@@ -38,11 +38,6 @@ wss.on("connection", function connection(ws, req) {
     }, heartbeatInterval * 2); // aguarda o dobro do intervalo de heartbeat antes de disparar o temporizador
   }
 
-  function resetHeartbeatTimer() {
-    clearTimeout(heartbeatTimer);
-    startHeartbeatTimer();
-  }
-
   //id recebido do client pela url
 
   ws.on("message", function message(data) {
@@ -308,7 +303,10 @@ wss.on("connection", function connection(ws, req) {
     }
   }
 
-  function checkHeartBeat() {}
+  function checkHeartBeat() {
+    clearTimeout(heartbeatTimer);
+    startHeartbeatTimer();
+  }
 
   function leave() {
     if (ws.room && rooms.length !== 0) {
@@ -325,6 +323,7 @@ wss.on("connection", function connection(ws, req) {
 
   ws.on("error", (e) => {
     console.log(e);
+    send(JSON.stringify(e));
   });
 
   function close() {
