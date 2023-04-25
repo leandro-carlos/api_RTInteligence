@@ -75,10 +75,8 @@ wss.on("connection", function connection(ws, req) {
 
     let obj = {
       type: "user_online",
-      totalUsersOnline: clients.length,
+      totalUsersOnline: clients.length(),
     };
-
-    send();
 
     return wss.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {
@@ -329,7 +327,7 @@ wss.on("connection", function connection(ws, req) {
 
       let obj = {
         type: "user_online",
-        totalUsersOnline: totalUsersOnline,
+        totalUsersOnline: clients.length(),
       };
 
       wss.clients.forEach(function each(client) {
