@@ -302,13 +302,13 @@ wss.on("connection", function connection(ws, req) {
       warnThreeMinutes.stop();
       warnOneMinute.stop();
       terminateAllCalls.stop();
-      console.log("Conexão encerrada");
-      return wss.clients.forEach(function each(client) {
+      wss.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify(obj));
         }
-        ws.close();
       });
+
+      ws.close();
     }
   });
   ws.on("error", (e) => {
