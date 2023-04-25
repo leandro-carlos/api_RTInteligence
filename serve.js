@@ -3,19 +3,15 @@ const http = require("http");
 const WebSocket = require("ws");
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
-const url = require("url");
-const cron = require("node-cron");
 
 const port = 8080;
 
 const maxClients = 3;
 
-const threeMinutesWarn = "37 18 * * *";
-const oneMinuteWarn = "39 18 * * *";
-const closeCallsHour = "40 18 * * *";
 const videoSchedule = {
   initialHour: 18,
-  finalMinute: 40,
+  initialMinute: 0,
+  finalMinute: 20,
 };
 
 const newDate = new Date();
@@ -30,38 +26,22 @@ function resetRooms() {
 }
 
 wss.on("connection", function connection(ws, req) {
-  const warnThreeMinutes = cron.schedule(threeMinutesWarn, () => {
-    console.log("Executando warn 3");
-    let obj = {
-      type: "call_warn",
-      status: "COUNTDOWN_THREE",
-      timeleft: 3,
-    };
-    ws.send(JSON.stringify(obj));
-  });
-
-  const warnOneMinute = cron.schedule(oneMinuteWarn, () => {
-    console.log("Executando warn 1");
-    let obj = {
-      type: "call_warn",
-      status: "COUNTDOWN_ONE",
-      timeleft: 1,
-    };
-    ws.send(JSON.stringify(obj));
-  });
-
-  const terminateAllCalls = cron.schedule(closeCallsHour, () => {
-    console.log("Executando terminate");
-    let obj = {
-      type: "call_warn",
-      status: "SHUTDOWN",
-      timeleft: 0,
-    };
-    ws.send(JSON.stringify(obj));
-    resetRooms();
-  });
-
   // client conectado com o websocket
+
+  let heartbeatTimer = null;
+  const heartbeatInterval = 15000; // intervalo de heartbeat em milissegundos
+
+  function startHeartbeatTimer() {
+    heartbeatTimer = setTimeout(function () {
+      console.log("heartbeat não recebido, fechando conexão");
+      close();
+    }, heartbeatInterval * 2); // aguarda o dobro do intervalo de heartbeat antes de disparar o temporizador
+  }
+
+  function resetHeartbeatTimer() {
+    clearTimeout(heartbeatTimer);
+    startHeartbeatTimer();
+  }
 
   //id recebido do client pela url
 
@@ -77,6 +57,14 @@ wss.on("connection", function connection(ws, req) {
 
       case "connect":
         createOrJoin();
+        break;
+
+      case "checkTimer":
+        checkCountDown();
+        break;
+
+      case "heartbeat":
+        checkHeartBeat();
         break;
 
       case "cancel":
@@ -287,8 +275,43 @@ wss.on("connection", function connection(ws, req) {
     }
   }
 
+  function checkCountDown() {
+    if (minutes === videoSchedule.finalMinute - 3) {
+      let obj = {
+        type: "call_warn",
+        status: "COUNTDOWN",
+        timeleft: 3,
+      };
+      return send(obj);
+    } else if (minutes === videoSchedule.finalMinute - 2) {
+      let obj = {
+        type: "call_warn",
+        status: "COUNTDOWN",
+        timeleft: 2,
+      };
+      return send(obj);
+    } else if (minutes === videoSchedule.finalMinute - 1) {
+      let obj = {
+        type: "call_warn",
+        status: "COUNTDOWN",
+        timeleft: 1,
+      };
+      return send(obj);
+    } else if (minutes >= videoSchedule.finalMinute) {
+      let obj = {
+        type: "call_warn",
+        status: "SHUTDOWN",
+        timeleft: 0,
+      };
+      resetRooms();
+      return send(obj);
+    }
+  }
+
+  function checkHeartBeat() {}
+
   function leave() {
-    if (ws.room && ws.status !== "onCall") {
+    if (ws.room && rooms.length !== 0) {
       const room = ws.room;
       rooms[room] = rooms[room].filter((so) => so !== ws);
       ws["room"] = undefined;
@@ -297,11 +320,16 @@ wss.on("connection", function connection(ws, req) {
   }
 
   ws.on("close", () => {
+    close();
+  });
+
+  ws.on("error", (e) => {
+    console.log(e);
+  });
+
+  function close() {
     if (ws) {
       totalUsersOnline--;
-      warnThreeMinutes.stop();
-      warnOneMinute.stop();
-      terminateAllCalls.stop();
 
       let obj = {
         type: "user_online",
@@ -316,15 +344,8 @@ wss.on("connection", function connection(ws, req) {
 
       ws.close();
     }
-  });
-  ws.on("error", (e) => {
-    console.log(e);
-  });
+  }
 });
-
-function close(room) {
-  rooms = rooms.filter((key) => key !== room);
-}
 
 function genKey(length) {
   let result = "";
