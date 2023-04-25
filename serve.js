@@ -10,11 +10,11 @@ const port = 8080;
 
 const maxClients = 3;
 
-const threeMinutesWarn = "47 13 * * *";
-const oneMinuteWarn = "49 13 * * *";
-const closeCallsHour = "50 13 * * *";
+const threeMinutesWarn = "47 17 * * *";
+const oneMinuteWarn = "49 17 * * *";
+const closeCallsHour = "50 17 * * *";
 const videoSchedule = {
-  initialHour: 13,
+  initialHour: 17,
   finalMinute: 50,
 };
 
