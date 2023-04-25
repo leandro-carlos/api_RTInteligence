@@ -302,8 +302,14 @@ wss.on("connection", function connection(ws, req) {
       warnThreeMinutes.stop();
       warnOneMinute.stop();
       terminateAllCalls.stop();
+
+      let obj = {
+        type: "user_online",
+        totalUsersOnline: totalUsersOnline,
+      };
+
       wss.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN && !ws) {
+        if (client.readyState === WebSocket.OPEN) {
           client.send(JSON.stringify(obj));
         }
       });
