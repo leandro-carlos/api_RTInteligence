@@ -78,8 +78,6 @@ wss.on("connection", function connection(ws, req) {
       totalUsersOnline: clients.length,
     };
 
-    send();
-
     return wss.clients.forEach(function each(client) {
       if (client.readyState === WebSocket.OPEN) {
         client.send(JSON.stringify(obj));
