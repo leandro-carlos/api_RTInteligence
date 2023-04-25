@@ -10,12 +10,12 @@ const port = 8080;
 
 const maxClients = 3;
 
-const threeMinutesWarn = "07 13 * * *";
-const oneMinuteWarn = "09 13 * * *";
-const closeCallsHour = "10 13 * * *";
+const threeMinutesWarn = "27 13 * * *";
+const oneMinuteWarn = "29 13 * * *";
+const closeCallsHour = "30 13 * * *";
 const videoSchedule = {
   initialHour: 13,
-  finalMinute: 10,
+  finalMinute: 30,
 };
 
 let rooms = {};
@@ -293,6 +293,9 @@ wss.on("connection", function connection(ws, req) {
     if (ws) {
       ws.close();
       totalUsersOnline--;
+      warnThreeMinutes.stop();
+      warnOneMinute.stop();
+      terminateAllCalls.stop();
       console.log("Conexão encerrada");
     }
   });
