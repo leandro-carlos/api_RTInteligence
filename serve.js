@@ -86,6 +86,7 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function createOrJoin() {
+    let newDate = new Date();
     let hours = newDate.getHours();
     let minutes = newDate.getMinutes();
 
