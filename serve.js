@@ -14,7 +14,7 @@ const threeMinutesWarn = "17 18 * * *";
 const oneMinuteWarn = "19 18 * * *";
 const closeCallsHour = "20 18 * * *";
 const videoSchedule = {
-  initialHour: 18,
+  initialHour: 8,
   finalMinute: 20,
 };
 
