@@ -9,9 +9,9 @@ const port = 8080;
 const maxClients = 3;
 
 const videoSchedule = {
-  initialHour: 18,
+  initialHour: 21,
   initialMinute: 0,
-  finalMinute: 20,
+  finalMinute: 10,
 };
 
 const newDate = new Date();
@@ -33,12 +33,9 @@ wss.on("connection", function connection(ws, req) {
 
   function startHeartbeatTimer() {
     heartbeatTimer = setTimeout(function () {
-      console.log("heartbeat não recebido, fechando conexão");
       close();
     }, heartbeatInterval * 2); // aguarda o dobro do intervalo de heartbeat antes de disparar o temporizador
   }
-
-  //id recebido do client pela url
 
   ws.on("message", function message(data) {
     const obj = JSON.parse(data);
@@ -323,12 +320,13 @@ wss.on("connection", function connection(ws, req) {
 
   ws.on("error", (e) => {
     console.log(e);
-    send(JSON.stringify(e));
   });
 
   function close() {
     if (ws) {
-      totalUsersOnline--;
+      if (ws.uid) {
+        totalUsersOnline--;
+      }
 
       let obj = {
         type: "user_online",
