@@ -69,18 +69,6 @@ wss.on("connection", function connection(ws, req) {
     const obj = JSON.parse(data);
     const type = obj.type;
     // obj com o type de conexão recebida
-    if (
-      hours !== videoSchedule.initialHour ||
-      minutes > videoSchedule.finalMinute
-    ) {
-      let obj = {
-        type: "message",
-        status: "SHUTDOWN",
-        hours: hours,
-        minutes: minutes,
-      };
-      return send(obj);
-    }
 
     switch (type) {
       case "userOnline":
@@ -121,6 +109,19 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function createOrJoin() {
+    if (
+      hours !== videoSchedule.initialHour ||
+      minutes > videoSchedule.finalMinute
+    ) {
+      let obj = {
+        type: "message",
+        status: "SHUTDOWN",
+        hours: hours,
+        minutes: minutes,
+      };
+      return send(obj);
+    }
+
     warnThreeMinutes.start();
     warnOneMinute.start();
     terminateAllCalls.start();
@@ -297,12 +298,17 @@ wss.on("connection", function connection(ws, req) {
 
   ws.on("close", () => {
     if (ws) {
-      ws.close();
       totalUsersOnline--;
       warnThreeMinutes.stop();
       warnOneMinute.stop();
       terminateAllCalls.stop();
       console.log("Conexão encerrada");
+      return wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(obj));
+        }
+        ws.close();
+      });
     }
   });
   ws.on("error", (e) => {
