@@ -9,9 +9,9 @@ const port = 8080;
 const maxClients = 3;
 
 const videoSchedule = {
-  initialHour: 0,
+  initialHour: 8,
   initialMinute: 0,
-  finalMinute: 23,
+  finalMinute: 33,
 };
 
 let rooms = {};
@@ -192,7 +192,6 @@ wss.on("connection", function connection(ws, req) {
 
     // retorna call start para iniciar a video chamada no front
 
-    rooms[room].push(ws);
     ws["room"] = room;
     const obj = {
       status: "CALL_START_RECONNECT",
@@ -309,7 +308,19 @@ wss.on("connection", function connection(ws, req) {
       const room = ws.room;
       rooms[room] = rooms[room].filter((so) => so !== ws);
       ws["room"] = undefined;
-      console.log("leave");
+
+      if (rooms[room].length !== 0) {
+        obj = {
+          status: "WAITING_MORE_USERS",
+          usersCount: rooms[room].length,
+          type: "message",
+        };
+        return wss.clients.forEach(function each(client) {
+          if (client.readyState === WebSocket.OPEN && ws["room"] == roomName) {
+            client.send(JSON.stringify(obj));
+          }
+        });
+      }
     }
   }
 
@@ -322,21 +333,25 @@ wss.on("connection", function connection(ws, req) {
   });
 
   function close() {
+    try {
+      clearTimeout(heartbeatTimer);
+    } catch (error) {}
+
     if (ws) {
       if (ws.uid) {
         clients.splice(clients.indexOf(ws), 1);
+
+        let obj = {
+          type: "user_online",
+          totalUsersOnline: clients.length,
+        };
+
+        wss.clients.forEach(function each(client) {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(JSON.stringify(obj));
+          }
+        });
       }
-
-      let obj = {
-        type: "user_online",
-        totalUsersOnline: clients.length,
-      };
-
-      wss.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(JSON.stringify(obj));
-        }
-      });
 
       ws.close();
     }
