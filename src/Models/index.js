@@ -8,6 +8,7 @@ const api_respostas = require("./Respostas.js");
 const api_users = require("./User.js");
 const api_graphcomparative = require("./Comparative.js");
 const api_channels = require("./VideoCallChannels.js");
+const api_reportCsv = require("./ReportCSV.js");
 
 api_respostas.belongsTo(api_perguntas, {
   foreignKey: "id_categoria",
@@ -31,4 +32,5 @@ module.exports = {
   api_users,
   api_graphcomparative,
   api_channels,
+  api_reportCsv,
 };
