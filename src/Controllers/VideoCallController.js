@@ -3,6 +3,7 @@ const { api_reportCsv } = require("../Models/index.js");
 
 const { createTransport } = require("nodemailer");
 const createCsvWriter = require("csv-writer");
+const XLSX = require("xlsx");
 
 class VideoCallController {
   static EnterThreeUsersInCall = async (req, res) => {
@@ -36,7 +37,7 @@ class VideoCallController {
   static SendEmail = async (req, res) => {
     const transporter = createTransport(email);
 
-    const csvWritter = createCsvWriter.createArrayCsvWriter({
+    const csvWriter = createCsvWriter.createObjectCsvWriter({
       path: "./arquivo2.csv",
       header: [
         { id: "15" },
@@ -50,33 +51,42 @@ class VideoCallController {
       ],
     });
 
-    const mailOptions = {
-      from: email.auth.user,
-      to: "leandro.carlosleo2015@gmail.com",
-      subject: "Dados da tabela",
-      attachments: [{ filename: "dados.csv", content: "csvWritter" }],
-    };
+    try {
+      const data = await api_reportCsv.findAll();
+      const workbook = XLSX.utils.book_new();
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error);
-      } else {
-        console.log("Email sent: " + info.response);
-        res.json({ status: true, data: info.response });
-      }
-    });
+      const worksheet = XLSX.utils.json_to_sheet(data[0]);
 
-    // api_reportCsv.findAll().then((data) => {
-    //   csvWritter.writeRecords(data[0].dataValues).then(() => {
-    //     res.json({ status: true, data: data });
-    //   });
-    // });
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
 
-    // Cria um objeto de transporte de e-mail com as credenciais de origem
+      XLSX.writeFile(workbook, "arquivo_excel.xlsx");
 
-    // Define as opções de e-mail, incluindo o destinatário, o assunto e o anexo CSV
+      const mailOptions = {
+        from: email.auth.user,
+        to: "leandro.carlosleo2015@gmail.com",
+        subject: "Dados da tabela",
+        attachments: [
+          { filename: "arquivo2.csv", path: "./arquivo_excel.xlsx" },
+        ],
+      };
 
-    // Envia o e-mail
+      transporter.sendMail(mailOptions, function (error, info) {
+        if (error) {
+          console.log(error);
+          res.json({ status: false, message: "Erro ao enviar o email" });
+        } else {
+          console.log("Email sent: " + info.response);
+          res.json({
+            status: true,
+            message: "Email enviado com sucesso",
+            data: data,
+          });
+        }
+      });
+    } catch (err) {
+      console.log(err);
+      res.json({ status: false, message: "Erro ao buscar dados da tabela" });
+    }
   };
 }
 
