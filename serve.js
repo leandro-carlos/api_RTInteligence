@@ -12,7 +12,7 @@ const videoSchedule = {
   initialHour: 12,
   initialMinute: 35,
   finalHour: 12,
-  finalMinute: 42,
+  finalMinute: 49,
 };
 
 let rooms = {};
