@@ -31,7 +31,7 @@ wss.on("connection", function connection(ws, req) {
   function startHeartbeatTimer() {
     heartbeatTimer = setTimeout(function () {
       close();
-    }, heartbeatInterval * 2); // aguarda o dobro do intervalo de heartbeat antes de disparar o temporizador
+    }, heartbeatInterval * 3); // aguarda o dobro do intervalo de heartbeat antes de disparar o temporizador
   }
 
   ws.on("message", function message(data) {
@@ -100,14 +100,20 @@ wss.on("connection", function connection(ws, req) {
     let minutes = newDate.getMinutes();
 
     if (
-      (hours === videoSchedule.initialHour && minutes >= 50) ||
-      (hours === videoSchedule.finalHour && minutes <= 5)
+      (hours === videoSchedule.initialHour &&
+        minutes >= videoSchedule.initialMinute) ||
+      (hours === videoSchedule.finalHour &&
+        minutes <= videoSchedule.finalMinute)
     ) {
       let obj = {
         type: "message",
         status: "SHUTDOWN",
         hours: hours,
         minutes: minutes,
+        initialHour: videoSchedule.initialHour,
+        finalHour: videoSchedule.finalHour,
+        initialMinute: videoSchedule.initialMinute,
+        finalMinute: videoSchedule.finalMinute,
       };
       return send(obj);
     }
