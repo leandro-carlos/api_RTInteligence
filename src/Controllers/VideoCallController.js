@@ -37,27 +37,12 @@ class VideoCallController {
   static SendEmail = async (req, res) => {
     const transporter = createTransport(email);
 
-    const csvWriter = createCsvWriter.createObjectCsvWriter({
-      path: "./arquivo2.csv",
-      header: [
-        { id: "15" },
-        { name: "leandro" },
-        { email: "leandro1@gmail.com" },
-        { hourEnter: "15:300" },
-        { hourExit: "nul" },
-        { roomName: "sala 1" },
-        { createdAt: "2023-04-25T15:48:52.000Z" },
-        { updatedAt: "2023-04-25T15:48:52.000" },
-      ],
-    });
-
     try {
       const data = await api_reportCsv.findAll();
+
+      const worksheet = XLSX.utils.json_to_sheet(data);
       const workbook = XLSX.utils.book_new();
-
-      const worksheet = XLSX.utils.json_to_sheet(data[0]);
-
-      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      XLSX.utils.book_append_sheet(workbook, worksheet, "arquivo_excel");
 
       XLSX.writeFile(workbook, "arquivo_excel.xlsx");
 
@@ -85,7 +70,11 @@ class VideoCallController {
       });
     } catch (err) {
       console.log(err);
-      res.json({ status: false, message: "Erro ao buscar dados da tabela" });
+      res.json({
+        status: false,
+        message: "Erro ao buscar dados da tabela",
+        err,
+      });
     }
   };
 }
