@@ -109,9 +109,9 @@ wss.on("connection", function connection(ws, req) {
         status: "SHUTDOWN",
         hours: hours,
         minutes: minutes,
-        initialHour: videoSchedule.initialHour,
-        finalHour: videoSchedule.finalHour,
-        initialMinute: videoSchedule.initialMinute,
+        initialHour: videoSchedule.initialHour - 3,
+        finalHour: videoSchedule.finalHour - 3,
+        initalMinute: videoSchedule.initialMinute,
         finalMinute: videoSchedule.finalMinute,
       };
       return send(obj);
