@@ -10,9 +10,9 @@ const maxClients = 3;
 
 const videoSchedule = {
   initialHour: 12,
-  initialMinute: 50,
+  initialMinute: 20,
   finalHour: 13,
-  finalMinute: 05,
+  finalMinute: 25,
 };
 
 let rooms = {};
