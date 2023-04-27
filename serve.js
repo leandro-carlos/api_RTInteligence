@@ -10,8 +10,9 @@ const maxClients = 3;
 
 const videoSchedule = {
   initialHour: 09,
-  initialMinute: 0,
-  finalMinute: 12,
+  initialMinute: 50,
+  finalHour: 10,
+  finalMinute: 05,
 };
 
 let rooms = {};
@@ -99,8 +100,8 @@ wss.on("connection", function connection(ws, req) {
     let minutes = newDate.getMinutes();
 
     if (
-      hours !== videoSchedule.initialHour ||
-      minutes > videoSchedule.finalMinute
+      (hours === videoSchedule.initialHour && minutes >= 50) ||
+      (hours === videoSchedule.finalHour && minutes <= 5)
     ) {
       let obj = {
         type: "message",
