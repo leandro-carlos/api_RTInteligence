@@ -11,7 +11,7 @@ const maxClients = 3;
 const videoSchedule = {
   initialHour: 07,
   initialMinute: 0,
-  finalMinute: 30,
+  finalMinute: 53,
 };
 
 let rooms = {};
@@ -55,6 +55,10 @@ wss.on("connection", function connection(ws, req) {
         checkHeartBeat();
         break;
 
+      case "changeStatus":
+        changeStatusToOnCall();
+        break;
+
       case "cancel":
         leave();
         break;
@@ -83,6 +87,10 @@ wss.on("connection", function connection(ws, req) {
         client.send(JSON.stringify(obj));
       }
     });
+  }
+
+  function changeStatusToOnCall() {
+    ws.status = "onCall";
   }
 
   function createOrJoin() {
@@ -304,10 +312,14 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function leave() {
+    if (ws.status === "onCall") {
+      return;
+    }
     if (ws.room && rooms.length !== 0) {
       const room = ws.room;
       rooms[room] = rooms[room].filter((so) => so !== ws);
       ws["room"] = undefined;
+      ws.status = undefined;
 
       if (rooms[room].length !== 0) {
         obj = {
@@ -316,7 +328,7 @@ wss.on("connection", function connection(ws, req) {
           type: "message",
         };
         return wss.clients.forEach(function each(client) {
-          if (client.readyState === WebSocket.OPEN && ws["room"] == roomName) {
+          if (client.readyState === WebSocket.OPEN && ws["room"] == room) {
             client.send(JSON.stringify(obj));
           }
         });
@@ -352,7 +364,6 @@ wss.on("connection", function connection(ws, req) {
           }
         });
       }
-
       ws.close();
     }
   }
