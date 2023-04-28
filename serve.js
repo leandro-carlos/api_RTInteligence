@@ -111,7 +111,7 @@ wss.on("connection", function connection(ws, req) {
         minutes: minutes,
         initialHour: videoSchedule.initialHour - 3,
         finalHour: videoSchedule.finalHour - 3,
-        initalMinute: videoSchedule.initialMinute,
+        initalMinute: "00",
         finalMinute: videoSchedule.finalMinute,
       };
       return send(obj);
