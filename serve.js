@@ -9,10 +9,10 @@ const port = 8080;
 const maxClients = 3;
 
 const videoSchedule = {
-  initialHour: 13,
-  initialMinute: 30,
-  finalHour: 13,
-  finalMinute: 50,
+  initialHour: 20,
+  initialMinute: 0,
+  finalHour: 20,
+  finalMinute: 20,
 };
 
 let rooms = {};
@@ -100,9 +100,9 @@ wss.on("connection", function connection(ws, req) {
     let minutes = newDate.getMinutes();
 
     if (
-      (hours === videoSchedule.initialHour &&
+      (hours !== videoSchedule.initialHour &&
         minutes < videoSchedule.initialMinute) ||
-      (hours === videoSchedule.finalHour && minutes > videoSchedule.finalMinute)
+      (hours !== videoSchedule.finalHour && minutes > videoSchedule.finalMinute)
     ) {
       let obj = {
         type: "message",
