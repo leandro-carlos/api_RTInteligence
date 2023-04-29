@@ -102,7 +102,9 @@ wss.on("connection", function connection(ws, req) {
     if (
       (hours !== videoSchedule.initialHour &&
         minutes < videoSchedule.initialMinute) ||
-      (hours !== videoSchedule.finalHour && minutes > videoSchedule.finalMinute)
+      (hours !== videoSchedule.finalHour &&
+        minutes > videoSchedule.finalMinute) ||
+      hours !== videoSchedule.initialHour
     ) {
       let obj = {
         type: "message",
