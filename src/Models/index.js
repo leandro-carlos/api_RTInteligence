@@ -17,7 +17,7 @@ api_respostas.belongsTo(api_perguntas, {
 });
 
 sequelize
-  .sync()
+  .sync({})
   .then(() => {
     console.log("tables created suceel");
   })

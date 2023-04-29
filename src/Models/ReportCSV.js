@@ -7,6 +7,10 @@ const reportCSV = sequelize.define("api_reportCSV", {
     allowNull: false,
     primaryKey: true,
   },
+  id_user: {
+    type: sequelize.Sequelize.INTEGER,
+  },
+
   name: {
     type: sequelize.Sequelize.STRING,
     // allowNull: false,
@@ -26,6 +30,9 @@ const reportCSV = sequelize.define("api_reportCSV", {
   roomName: {
     type: sequelize.Sequelize.STRING,
     allowNull: false,
+  },
+  data: {
+    type: sequelize.Sequelize.DATEONLY,
   },
 });
 
