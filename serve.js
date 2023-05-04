@@ -106,7 +106,7 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function createOrJoin() {
-    function checkHour() {
+    const checkHour = () => {
       const newDate = new Date();
       const hours = newDate.getHours();
       const minutes = newDate.getMinutes();
@@ -136,7 +136,7 @@ wss.on("connection", function connection(ws, req) {
           return false;
         }
       }
-    }
+    };
 
     const isVideoCallHour = checkHour();
 
