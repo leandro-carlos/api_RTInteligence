@@ -106,6 +106,10 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function createOrJoin() {
+    const newDate = new Date();
+    const hours = newDate.getHours();
+    const minutes = newDate.getMinutes();
+
     if (
       (hours === videoSchedule.initialHour &&
         minutes >= videoSchedule.initialMinute) ||
