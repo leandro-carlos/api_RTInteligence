@@ -104,40 +104,38 @@ wss.on("connection", function connection(ws, req) {
   function changeStatus() {
     ws.status = "onCall";
   }
+  const checkHour = () => {
+    const newDate = new Date();
+    const hours = newDate.getHours();
+    const minutes = newDate.getMinutes();
 
-  function createOrJoin() {
-    const checkHour = () => {
-      const newDate = new Date();
-      const hours = newDate.getHours();
-      const minutes = newDate.getMinutes();
-
-      if (videoSchedule.initialHour !== videoSchedule.finalHour) {
-        if (
-          hours === videoSchedule.initialHour &&
-          minutes >= videoSchedule.initialMinute
-        ) {
-          return true;
-        } else if (
-          hours === videoSchedule.finalHour &&
-          minutes <= videoSchedule.finalMinute
-        ) {
-          return true;
-        } else {
-          return false;
-        }
-      } else if (videoSchedule.initialHour === videoSchedule.finalHour) {
-        if (
-          hours === videoSchedule.initialHour &&
-          minutes >= videoSchedule.initialMinute &&
-          minutes <= videoSchedule.finalMinute
-        ) {
-          return true;
-        } else {
-          return false;
-        }
+    if (videoSchedule.initialHour !== videoSchedule.finalHour) {
+      if (
+        hours === videoSchedule.initialHour &&
+        minutes >= videoSchedule.initialMinute
+      ) {
+        return true;
+      } else if (
+        hours === videoSchedule.finalHour &&
+        minutes <= videoSchedule.finalMinute
+      ) {
+        return true;
+      } else {
+        return false;
       }
-    };
-
+    } else if (videoSchedule.initialHour === videoSchedule.finalHour) {
+      if (
+        hours === videoSchedule.initialHour &&
+        minutes >= videoSchedule.initialMinute &&
+        minutes <= videoSchedule.finalMinute
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
+  };
+  function createOrJoin() {
     const isVideoCallHour = checkHour();
 
     if (isVideoCallHour === true) {
