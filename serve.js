@@ -39,34 +39,70 @@ wss.on("connection", function connection(ws, req) {
     const type = obj.type;
     // obj com o type de conexão recebida
 
-    switch (type) {
-      case "userOnline":
-        saveId(obj.id);
-        break;
+    if (
+      (hours === videoSchedule.initialHour &&
+        minutes >= videoSchedule.initialMinute) ||
+      (hours === videoSchedule.finalHour &&
+        minutes <= videoSchedule.finalMinute)
+    ) {
+      switch (type) {
+        case "userOnline":
+          saveId(obj.id);
+          break;
 
-      case "connect":
-        createOrJoin();
-        break;
+        case "connect":
+          // função de criar / reconectar / entrar em um canal
+          createOrJoin();
+          break;
 
-      case "checkTimer":
-        checkCountDown();
-        break;
+        case "connectBeyondLimit":
+          //função para se conectar mesmo após o limite de 3 no canal.
+          joinChannelBeyondLimit();
+          break;
 
-      case "heartbeat":
-        checkHeartBeat();
-        break;
+        case "checkTimer":
+          // função de checagem se a video call ainda esta no horario permitido
+          checkCountDown();
+          break;
 
-      case "changeStatus":
-        changeStatusToOnCall();
-        break;
+        case "heartbeat":
+          // função de checagem se o user ainda esta online
+          checkHeartBeat();
+          break;
 
-      case "cancel":
-        leave();
-        break;
+        case "changeStatus":
+          // mudando status para onCall, evitando alguns bugs.
+          changeStatus();
+          break;
 
-      default:
-        console.warn(`Type: ${type} unknown`);
-        break;
+        case "cancel":
+          // função de sair da room, chamada qnd cancelar a busca ou quando voltar no app
+          // so funciona quando estiver em call
+          leave();
+          break;
+
+        default:
+          console.warn(`Type: ${type} unknown`);
+          break;
+      }
+    } else {
+      let obj = {
+        type: "message",
+        status: "SHUTDOWN",
+        hours: hours,
+        minutes: minutes,
+        initialHour: videoSchedule.initialHour - 3,
+        finalHour: videoSchedule.finalHour - 3,
+        initalMinute:
+          videoSchedule.initialMinute < 10
+            ? `0${videoSchedule.initialMinute}`
+            : videoSchedule.initialMinute,
+        finalMinute:
+          videoSchedule.finalMinute < 10
+            ? `0${videoSchedule.finalMinute}`
+            : videoSchedule.finalMinute,
+      };
+      return send(obj);
     }
   });
 
@@ -90,35 +126,11 @@ wss.on("connection", function connection(ws, req) {
     });
   }
 
-  function changeStatusToOnCall() {
+  function changeStatus() {
     ws.status = "onCall";
   }
 
   function createOrJoin() {
-    let newDate = new Date();
-    let hours = newDate.getHours();
-    let minutes = newDate.getMinutes();
-
-    if (
-      (hours !== videoSchedule.initialHour &&
-        minutes < videoSchedule.initialMinute) ||
-      (hours !== videoSchedule.finalHour &&
-        minutes > videoSchedule.finalMinute) ||
-      hours !== videoSchedule.initialHour
-    ) {
-      let obj = {
-        type: "message",
-        status: "SHUTDOWN",
-        hours: hours,
-        minutes: minutes,
-        initialHour: videoSchedule.initialHour - 3,
-        finalHour: videoSchedule.finalHour - 3,
-        initalMinute: "00",
-        finalMinute: videoSchedule.finalMinute,
-      };
-      return send(obj);
-    }
-
     //verifica se não existe nenhuma room e então cria uma.
     console.log(" create or join");
     const keys = Object.keys(rooms);
@@ -146,10 +158,30 @@ wss.on("connection", function connection(ws, req) {
     return create();
   }
 
+  function joinChannelBeyondLimit() {
+    if (ws.status === "onCall") {
+      return;
+    }
+    leave();
+
+    const keys = Object.keys(rooms);
+    const length = keys.length;
+
+    for (let i = 0; i < length; i++) {
+      if (
+        rooms[keys[i]].length === maxClients ||
+        rooms[keys[i]].length === maxClients + 1
+      ) {
+        return joinWithNoLimit(keys[i]);
+      }
+    }
+
+    return createOrJoin();
+  }
+
   function send(obj) {
     if (ws.OPEN) {
       const stringify = JSON.stringify(obj);
-      console.log(stringify);
       return ws.send(stringify);
     } else {
       console.log("nenhuma conexão");
@@ -279,6 +311,19 @@ wss.on("connection", function connection(ws, req) {
     }
   }
 
+  function joinWithNoLimit(roomName) {
+    const room = roomName;
+    let obj;
+    rooms[room].push(ws);
+    ws["room"] = room;
+    obj = {
+      status: "CALL_START",
+      usersCount: 3,
+      channel: roomName,
+      type: "message",
+    };
+    send(obj);
+  }
   function checkCountDown() {
     let newDate = new Date();
     let minutes = newDate.getMinutes();
@@ -309,6 +354,7 @@ wss.on("connection", function connection(ws, req) {
         status: "SHUTDOWN",
         timeleft: 0,
       };
+      ws.status = undefined;
       resetRooms();
       return send(obj);
     }
