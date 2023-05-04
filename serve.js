@@ -106,20 +106,42 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function createOrJoin() {
-    const newDate = new Date();
-    const hours = newDate.getHours();
-    const minutes = newDate.getMinutes();
+    function checkHour() {
+      const newDate = new Date();
+      const hours = newDate.getHours();
+      const minutes = newDate.getMinutes();
 
-    if (
-      (hours === videoSchedule.initialHour &&
-        minutes >= videoSchedule.initialMinute &&
-        minutes <= videoSchedule.finalMinute) ||
-      (hours === videoSchedule.finalHour &&
-        minutes <= videoSchedule.finalMinute &&
-        minutes >= videoSchedule.initialMinute)
-    ) {
+      if (videoSchedule.initialHour !== videoSchedule.finalHour) {
+        if (
+          hours === videoSchedule.initialHour &&
+          minutes >= videoSchedule.initialMinute
+        ) {
+          return true;
+        } else if (
+          hours === videoSchedule.finalHour &&
+          minutes <= videoSchedule.finalMinute
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      } else if (videoSchedule.initialHour === videoSchedule.finalHour) {
+        if (
+          hours === videoSchedule.initialHour &&
+          minutes >= videoSchedule.initialMinute &&
+          minutes <= videoSchedule.finalMinute
+        ) {
+          return true;
+        } else {
+          return false;
+        }
+      }
+    }
+
+    const isVideoCallHour = checkHour();
+
+    if (isVideoCallHour === true) {
       //verifica se não existe nenhuma room e então cria uma.
-      console.log(" create or join");
       const keys = Object.keys(rooms);
       const length = keys.length;
       console.log(length);
@@ -174,10 +196,7 @@ wss.on("connection", function connection(ws, req) {
     const length = keys.length;
 
     for (let i = 0; i < length; i++) {
-      if (
-        rooms[keys[i]].length === maxClients ||
-        rooms[keys[i]].length === maxClients + 1
-      ) {
+      if (rooms[keys[i]].length === maxClients) {
         return joinWithNoLimit(keys[i]);
       }
     }
