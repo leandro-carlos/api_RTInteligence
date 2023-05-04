@@ -104,7 +104,7 @@ wss.on("connection", function connection(ws, req) {
   function changeStatus() {
     ws.status = "onCall";
   }
-  const checkHour = () => {
+  function checkHour() {
     const newDate = new Date();
     const hours = newDate.getHours();
     const minutes = newDate.getMinutes();
@@ -134,12 +134,16 @@ wss.on("connection", function connection(ws, req) {
         return false;
       }
     }
-  };
-  function createOrJoin() {
-    const isVideoCallHour = checkHour();
 
-    if (isVideoCallHour === true) {
-      //verifica se não existe nenhuma room e então cria uma.
+    return false;
+  }
+
+  function createOrJoin() {
+    const isVideoCallTime = checkHour();
+    console.log(isVideoCallTime);
+    console.log("chegou aqui");
+    //verifica se não existe nenhuma room e então cria uma.
+    if (isVideoCallTime === true) {
       const keys = Object.keys(rooms);
       const length = keys.length;
       console.log(length);
@@ -167,8 +171,6 @@ wss.on("connection", function connection(ws, req) {
       let obj = {
         type: "message",
         status: "SHUTDOWN",
-        hours: hours,
-        minutes: minutes,
         initialHour: videoSchedule.initialHour - 3,
         finalHour: videoSchedule.finalHour - 3,
         initalMinute:
@@ -419,6 +421,7 @@ wss.on("connection", function connection(ws, req) {
 
   ws.on("error", (e) => {
     console.log(e);
+    ws.send(JSON.stringify(e));
   });
 
   function close() {
