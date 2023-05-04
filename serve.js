@@ -39,70 +39,45 @@ wss.on("connection", function connection(ws, req) {
     const type = obj.type;
     // obj com o type de conexão recebida
 
-    if (
-      (hours === videoSchedule.initialHour &&
-        minutes >= videoSchedule.initialMinute) ||
-      (hours === videoSchedule.finalHour &&
-        minutes <= videoSchedule.finalMinute)
-    ) {
-      switch (type) {
-        case "userOnline":
-          saveId(obj.id);
-          break;
+    switch (type) {
+      case "userOnline":
+        saveId(obj.id);
+        break;
 
-        case "connect":
-          // função de criar / reconectar / entrar em um canal
-          createOrJoin();
-          break;
+      case "connect":
+        // função de criar / reconectar / entrar em um canal
+        createOrJoin();
+        break;
 
-        case "connectBeyondLimit":
-          //função para se conectar mesmo após o limite de 3 no canal.
-          joinChannelBeyondLimit();
-          break;
+      case "connectBeyondLimit":
+        //função para se conectar mesmo após o limite de 3 no canal.
+        joinChannelBeyondLimit();
+        break;
 
-        case "checkTimer":
-          // função de checagem se a video call ainda esta no horario permitido
-          checkCountDown();
-          break;
+      case "checkTimer":
+        // função de checagem se a video call ainda esta no horario permitido
+        checkCountDown();
+        break;
 
-        case "heartbeat":
-          // função de checagem se o user ainda esta online
-          checkHeartBeat();
-          break;
+      case "heartbeat":
+        // função de checagem se o user ainda esta online
+        checkHeartBeat();
+        break;
 
-        case "changeStatus":
-          // mudando status para onCall, evitando alguns bugs.
-          changeStatus();
-          break;
+      case "changeStatus":
+        // mudando status para onCall, evitando alguns bugs.
+        changeStatus();
+        break;
 
-        case "cancel":
-          // função de sair da room, chamada qnd cancelar a busca ou quando voltar no app
-          // so funciona quando estiver em call
-          leave();
-          break;
+      case "cancel":
+        // função de sair da room, chamada qnd cancelar a busca ou quando voltar no app
+        // so funciona quando estiver em call
+        leave();
+        break;
 
-        default:
-          console.warn(`Type: ${type} unknown`);
-          break;
-      }
-    } else {
-      let obj = {
-        type: "message",
-        status: "SHUTDOWN",
-        hours: hours,
-        minutes: minutes,
-        initialHour: videoSchedule.initialHour - 3,
-        finalHour: videoSchedule.finalHour - 3,
-        initalMinute:
-          videoSchedule.initialMinute < 10
-            ? `0${videoSchedule.initialMinute}`
-            : videoSchedule.initialMinute,
-        finalMinute:
-          videoSchedule.finalMinute < 10
-            ? `0${videoSchedule.finalMinute}`
-            : videoSchedule.finalMinute,
-      };
-      return send(obj);
+      default:
+        console.warn(`Type: ${type} unknown`);
+        break;
     }
   });
 
@@ -131,31 +106,56 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function createOrJoin() {
-    //verifica se não existe nenhuma room e então cria uma.
-    console.log(" create or join");
-    const keys = Object.keys(rooms);
-    const length = keys.length;
-    console.log(length);
+    if (
+      (hours === videoSchedule.initialHour &&
+        minutes >= videoSchedule.initialMinute) ||
+      (hours === videoSchedule.finalHour &&
+        minutes <= videoSchedule.finalMinute)
+    ) {
+      //verifica se não existe nenhuma room e então cria uma.
+      console.log(" create or join");
+      const keys = Object.keys(rooms);
+      const length = keys.length;
+      console.log(length);
 
-    if (length === 0) {
-      return create();
-    }
-
-    // Verifica se o usuario já estava conectado em alguma room pelo id.
-    const check = checkReconnect(keys, length);
-    if (check.status === true) {
-      return joinReconnect(check.room);
-    }
-
-    // verifica se existe alguma sala com vagas disponiveis.
-    for (let i = 0; i < length; i++) {
-      if (rooms[keys[i]].length < maxClients) {
-        return join(keys[i]);
+      if (length === 0) {
+        return create();
       }
-    }
 
-    // se nenhum dos casos acima se realizar, cria uma sala.
-    return create();
+      // Verifica se o usuario já estava conectado em alguma room pelo id.
+      const check = checkReconnect(keys, length);
+      if (check.status === true) {
+        return joinReconnect(check.room);
+      }
+
+      // verifica se existe alguma sala com vagas disponiveis.
+      for (let i = 0; i < length; i++) {
+        if (rooms[keys[i]].length < maxClients) {
+          return join(keys[i]);
+        }
+      }
+
+      // se nenhum dos casos acima se realizar, cria uma sala.
+      return create();
+    } else {
+      let obj = {
+        type: "message",
+        status: "SHUTDOWN",
+        hours: hours,
+        minutes: minutes,
+        initialHour: videoSchedule.initialHour - 3,
+        finalHour: videoSchedule.finalHour - 3,
+        initalMinute:
+          videoSchedule.initialMinute < 10
+            ? `0${videoSchedule.initialMinute}`
+            : videoSchedule.initialMinute,
+        finalMinute:
+          videoSchedule.finalMinute < 10
+            ? `0${videoSchedule.finalMinute}`
+            : videoSchedule.finalMinute,
+      };
+      return send(obj);
+    }
   }
 
   function joinChannelBeyondLimit() {
