@@ -112,9 +112,11 @@ wss.on("connection", function connection(ws, req) {
 
     if (
       (hours === videoSchedule.initialHour &&
-        minutes >= videoSchedule.initialMinute) ||
+        minutes >= videoSchedule.initialMinute &&
+        minutes <= videoSchedule.finalMinute) ||
       (hours === videoSchedule.finalHour &&
-        minutes <= videoSchedule.finalMinute)
+        minutes <= videoSchedule.finalMinute &&
+        minutes >= videoSchedule.initialMinute)
     ) {
       //verifica se não existe nenhuma room e então cria uma.
       console.log(" create or join");
