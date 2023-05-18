@@ -9,10 +9,10 @@ const port = 8080;
 const maxClients = 3;
 
 const videoSchedule = {
-  initialHour: 19,
-  initialMinute: 40,
-  finalHour: 20,
-  finalMinute: 40,
+  initialHour: 23,
+  initialMinute: 50,
+  finalHour: 24,
+  finalMinute: 05,
 };
 
 let rooms = {};
