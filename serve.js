@@ -197,20 +197,21 @@ wss.on("connection", function connection(ws, req) {
 
     const keys = Object.keys(rooms);
     const length = keys.length;
+    let room;
 
     for (let i = 0; i < length; i++) {
       if (rooms[keys[i]].length === maxClients) {
-        return joinWithNoLimit(keys[i]);
+        room = keys[i];
+        joinWithNoLimit(keys[i]);
+        return;
       }
     }
 
-    const room = ws.room;
-
     let obj = {
       status: "WAITING_MORE_USERS",
-      usersCount: rooms[room].length,
+      usersCount: room.length,
       type: "message",
-      length: rooms[keys[i]].length,
+      length: room.length,
     };
 
     return send(obj);
