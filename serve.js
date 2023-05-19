@@ -9,7 +9,7 @@ const port = 8080;
 const maxClients = 3;
 
 const videoSchedule = {
-  initialHour: 23,
+  initialHour: 12,
   initialMinute: 50,
   finalHour: 24,
   finalMinute: 10,
@@ -202,7 +202,7 @@ wss.on("connection", function connection(ws, req) {
 
     for (let i = 0; i < length; i++) {
       console.log(rooms[keys[i]].length, rooms[keys[i]]);
-      if (rooms[keys[i]].length > 2) {
+      if (rooms[keys[i]].length === maxClients) {
         joinWithNoLimit(keys[i]);
         return;
       }
@@ -375,6 +375,7 @@ wss.on("connection", function connection(ws, req) {
 
   function checkCountDown() {
     let newDate = new Date();
+    let hours = newDate.getHours();
     let minutes = newDate.getMinutes();
     if (minutes === videoSchedule.finalMinute - 3) {
       let obj = {
@@ -383,21 +384,30 @@ wss.on("connection", function connection(ws, req) {
         timeleft: 3,
       };
       return send(obj);
-    } else if (minutes === videoSchedule.finalMinute - 2) {
+    } else if (
+      hours === videoSchedule.finalHour &&
+      minutes === videoSchedule.finalMinute - 2
+    ) {
       let obj = {
         type: "call_warn",
         status: "COUNTDOWN",
         timeleft: 2,
       };
       return send(obj);
-    } else if (minutes === videoSchedule.finalMinute - 1) {
+    } else if (
+      hours === videoSchedule.finalHour &&
+      minutes === videoSchedule.finalMinute - 1
+    ) {
       let obj = {
         type: "call_warn",
         status: "COUNTDOWN",
         timeleft: 1,
       };
       return send(obj);
-    } else if (minutes >= videoSchedule.finalMinute) {
+    } else if (
+      hours === videoSchedule.finalHour &&
+      minutes >= videoSchedule.finalMinute
+    ) {
       let obj = {
         type: "call_warn",
         status: "SHUTDOWN",
