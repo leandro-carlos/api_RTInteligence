@@ -209,7 +209,7 @@ wss.on("connection", function connection(ws, req) {
       status: "WAITING_MORE_USERS",
       usersCount: 1,
       type: "message",
-      length: rooms,
+      length: rooms[keys[0]].length,
     };
 
     return send(obj);
