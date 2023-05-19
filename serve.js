@@ -12,7 +12,7 @@ const videoSchedule = {
   initialHour: 23,
   initialMinute: 50,
   finalHour: 24,
-  finalMinute: 05,
+  finalMinute: 10,
 };
 
 let rooms = {};
@@ -210,6 +210,7 @@ wss.on("connection", function connection(ws, req) {
       status: "WAITING_MORE_USERS",
       usersCount: rooms[room].length,
       type: "message",
+      length: rooms[keys[i]].length,
     };
 
     return send(obj);
