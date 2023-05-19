@@ -318,7 +318,7 @@ wss.on("connection", function connection(ws, req) {
         status: "WAITING_MORE_USERS",
         usersCount: 2,
         type: "message",
-        room: rooms,
+        length: rooms[room].length,
       };
       return wss.clients.forEach(function each(client) {
         if (client.readyState === WebSocket.OPEN && ws["room"] == roomName) {
@@ -333,7 +333,7 @@ wss.on("connection", function connection(ws, req) {
         status: "WAITING_MORE_USERS",
         usersCount: 1,
         type: "message",
-        room: rooms,
+        length: rooms[room].length,
       };
       send(obj);
     }
@@ -351,7 +351,7 @@ wss.on("connection", function connection(ws, req) {
       usersCount: 3,
       channel: roomName,
       type: "message",
-      room: rooms,
+      length: rooms[room].length,
     };
     send(obj);
   }
