@@ -148,7 +148,7 @@ wss.on("connection", function connection(ws, req) {
     if (isVideoCallTime === true) {
       const keys = Object.keys(rooms);
       const length = keys.length;
-      console.log(length);
+      console.log(keys);
 
       if (length === 0) {
         return create();
