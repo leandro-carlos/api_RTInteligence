@@ -204,7 +204,15 @@ wss.on("connection", function connection(ws, req) {
       }
     }
 
-    return;
+    const room = ws.room;
+
+    let obj = {
+      status: "WAITING_MORE_USERS",
+      usersCount: rooms[room].length,
+      type: "message",
+    };
+
+    return send(obj);
   }
 
   function send(obj) {
