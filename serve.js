@@ -10,9 +10,9 @@ const maxClients = 3;
 
 const videoSchedule = {
   initialHour: 12,
-  initialMinute: 50,
-  finalHour: 24,
-  finalMinute: 10,
+  initialMinute: 22,
+  finalHour: 12,
+  finalMinute: 30,
 };
 
 let rooms = {};
@@ -105,29 +105,41 @@ wss.on("connection", function connection(ws, req) {
     ws.status = "onCall";
   }
   function checkHour(hours, minutes) {
-    if (videoSchedule.initialHour !== videoSchedule.finalHour) {
+    // if (videoSchedule.initialHour !== videoSchedule.finalHour) {
+    //   if (
+    //     hours === videoSchedule.initialHour &&
+    //     minutes >= videoSchedule.initialMinute
+    //   ) {
+    //     return true;
+    //   } else if (
+    //     hours === videoSchedule.finalHour &&
+    //     minutes <= videoSchedule.finalMinute
+    //   ) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // } else if (videoSchedule.initialHour === videoSchedule.finalHour) {
+    //   if (
+    //     hours === videoSchedule.initialHour &&
+    //     minutes >= videoSchedule.initialMinute &&
+    //     minutes <= videoSchedule.finalMinute
+    //   ) {
+    //     return true;
+    //   } else {
+    //     return false;
+    //   }
+    // }
+
+    if (
+      hours >= videoSchedule.initialHour &&
+      hours <= videoSchedule.finalHour
+    ) {
       if (
-        hours === videoSchedule.initialHour &&
-        minutes >= videoSchedule.initialMinute
-      ) {
-        return true;
-      } else if (
-        hours === videoSchedule.finalHour &&
-        minutes <= videoSchedule.finalMinute
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    } else if (videoSchedule.initialHour === videoSchedule.finalHour) {
-      if (
-        hours === videoSchedule.initialHour &&
         minutes >= videoSchedule.initialMinute &&
         minutes <= videoSchedule.finalMinute
       ) {
         return true;
-      } else {
-        return false;
       }
     }
 
@@ -139,8 +151,7 @@ wss.on("connection", function connection(ws, req) {
     const hours = newDate.getHours();
     const minutes = newDate.getMinutes();
 
-    // const isVideoCallTime = checkHour(hours, minutes);
-    const isVideoCallTime = true;
+    const isVideoCallTime = checkHour(hours, minutes);
 
     console.log(isVideoCallTime);
     console.log("chegou aqui");
