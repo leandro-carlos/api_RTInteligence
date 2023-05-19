@@ -198,6 +198,8 @@ wss.on("connection", function connection(ws, req) {
     const keys = Object.keys(rooms);
     const length = keys.length;
 
+    console.log(keys);
+
     for (let i = 0; i < length; i++) {
       console.log(rooms[keys[i]].length, rooms[keys[i]]);
       if (rooms[keys[i]].length > 2) {
