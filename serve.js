@@ -193,6 +193,8 @@ wss.on("connection", function connection(ws, req) {
       return;
     }
 
+    console.log("entrou beyondlimit");
+
     const keys = Object.keys(rooms);
     const length = keys.length;
 
@@ -202,7 +204,7 @@ wss.on("connection", function connection(ws, req) {
       }
     }
 
-    return createOrJoin();
+    return;
   }
 
   function send(obj) {
@@ -256,11 +258,16 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function joinReconnect(roomName) {
+    console.log("join reconnect");
     // reconecta em uma sala já existente, não valida o tamanho maximo
     const room = roomName;
     if (!Object.keys(rooms).includes(room)) {
       console.warn(`Room ${room} does not exist!`);
       createOrJoin();
+      return;
+    }
+
+    if (rooms[room].length < 3) {
       return;
     }
 
@@ -303,7 +310,7 @@ wss.on("connection", function connection(ws, req) {
         type: "message",
       };
       return wss.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN && ws["room"] == roomName) {
+        if (client.readyState === WebSocket.OPEN && client.room == roomName) {
           client.send(JSON.stringify(obj));
         }
       });
@@ -321,7 +328,7 @@ wss.on("connection", function connection(ws, req) {
         length: rooms[room].length,
       };
       return wss.clients.forEach(function each(client) {
-        if (client.readyState === WebSocket.OPEN && ws["room"] == roomName) {
+        if (client.readyState === WebSocket.OPEN && client.room == roomName) {
           client.send(JSON.stringify(obj));
         }
       });
@@ -398,27 +405,34 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function leave() {
+    console.log("entrou leave");
     if (ws.status === "onCall") {
       return;
     }
-    if (ws.room && rooms.length !== 0) {
+    if (ws.room) {
+      console.log("entrou if do leave");
       const room = ws.room;
       rooms[room] = rooms[room].filter((so) => so !== ws);
       ws["room"] = undefined;
       ws.status = undefined;
 
+      console.log("limpou a sala", ws.room);
+
       if (rooms[room].length !== 0) {
-        obj = {
+        console.log("entrou no if final");
+        let obj = {
           status: "WAITING_MORE_USERS",
-          usersCount: rooms[room].length - 1,
+          usersCount: rooms[room].length,
           type: "message",
         };
         return wss.clients.forEach(function each(client) {
+          console.log("client aq", client.readyState, client.room);
           if (
             client.readyState === WebSocket.OPEN &&
-            ws["room"] == room &&
+            client.room == room &&
             client !== ws
           ) {
+            console.log("enviou para o cliente");
             client.send(JSON.stringify(obj));
           }
         });
