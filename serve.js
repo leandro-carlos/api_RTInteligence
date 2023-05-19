@@ -201,7 +201,7 @@ wss.on("connection", function connection(ws, req) {
 
     for (let i = 0; i < length; i++) {
       if (rooms[keys[i]].length === maxClients) {
-        room = keys[i];
+        room = rooms[keys[i]];
         joinWithNoLimit(keys[i]);
         return;
       }
