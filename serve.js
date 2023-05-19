@@ -9,10 +9,10 @@ const port = 8080;
 const maxClients = 3;
 
 const videoSchedule = {
-  initialHour: 24,
-  initialMinute: 05,
-  finalHour: 24,
-  finalMinute: 12,
+  initialHour: 00,
+  initialMinute: 00,
+  finalHour: 00,
+  finalMinute: 00,
 };
 
 let rooms = {};
@@ -104,42 +104,42 @@ wss.on("connection", function connection(ws, req) {
   function changeStatus() {
     ws.status = "onCall";
   }
-  function checkHour() {
-    const newDate = new Date();
-    const hours = newDate.getHours();
-    const minutes = newDate.getMinutes();
+  // function checkHour() {
+  //   const newDate = new Date();
+  //   const hours = newDate.getHours();
+  //   const minutes = newDate.getMinutes();
 
-    if (videoSchedule.initialHour !== videoSchedule.finalHour) {
-      if (
-        hours === videoSchedule.initialHour &&
-        minutes >= videoSchedule.initialMinute
-      ) {
-        return true;
-      } else if (
-        hours === videoSchedule.finalHour &&
-        minutes <= videoSchedule.finalMinute
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    } else if (videoSchedule.initialHour === videoSchedule.finalHour) {
-      if (
-        hours === videoSchedule.initialHour &&
-        minutes >= videoSchedule.initialMinute &&
-        minutes <= videoSchedule.finalMinute
-      ) {
-        return true;
-      } else {
-        return false;
-      }
-    }
+  //   if (videoSchedule.initialHour !== videoSchedule.finalHour) {
+  //     if (
+  //       hours === videoSchedule.initialHour &&
+  //       minutes >= videoSchedule.initialMinute
+  //     ) {
+  //       return true;
+  //     } else if (
+  //       hours === videoSchedule.finalHour &&
+  //       minutes <= videoSchedule.finalMinute
+  //     ) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   } else if (videoSchedule.initialHour === videoSchedule.finalHour) {
+  //     if (
+  //       hours === videoSchedule.initialHour &&
+  //       minutes >= videoSchedule.initialMinute &&
+  //       minutes <= videoSchedule.finalMinute
+  //     ) {
+  //       return true;
+  //     } else {
+  //       return false;
+  //     }
+  //   }
 
-    return false;
-  }
+  //   return false;
+  // }
 
   function createOrJoin() {
-    const isVideoCallTime = checkHour();
+    const isVideoCallTime = true;
     console.log(isVideoCallTime);
     console.log("chegou aqui");
     //verifica se não existe nenhuma room e então cria uma.
