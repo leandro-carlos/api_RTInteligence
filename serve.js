@@ -407,7 +407,7 @@ wss.on("connection", function connection(ws, req) {
       if (rooms[room].length !== 0) {
         obj = {
           status: "WAITING_MORE_USERS",
-          usersCount: rooms[room].length,
+          usersCount: rooms[room].length - 1,
           type: "message",
         };
         return wss.clients.forEach(function each(client) {
