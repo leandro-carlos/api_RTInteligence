@@ -199,14 +199,8 @@ wss.on("connection", function connection(ws, req) {
     const length = keys.length;
 
     for (let i = 0; i < length; i++) {
-      obj = {
-        type: "message",
-        status: "WAITING_MORE_USERS",
-        usersCount: 1,
-        length: rooms[keys[i]].length,
-      };
-      send(obj);
-      if (rooms[keys[i]].length === maxClients) {
+      console.log(rooms[keys[i]].length);
+      if (rooms[keys[i]].length > 2) {
         joinWithNoLimit(keys[i]);
         return;
       }
@@ -217,6 +211,7 @@ wss.on("connection", function connection(ws, req) {
       usersCount: 1,
       type: "message",
       length: rooms[keys[0]].length,
+      lenght2: rooms[keys[1]].length,
     };
 
     return send(obj);
