@@ -9,10 +9,10 @@ const port = 8080;
 const maxClients = 3;
 
 const videoSchedule = {
-  initialHour: 00,
-  initialMinute: 00,
-  finalHour: 00,
-  finalMinute: 00,
+  initialHour: 23,
+  initialMinute: 50,
+  finalHour: 24,
+  finalMinute: 05,
 };
 
 let rooms = {};
@@ -104,42 +104,44 @@ wss.on("connection", function connection(ws, req) {
   function changeStatus() {
     ws.status = "onCall";
   }
-  // function checkHour() {
-  //   const newDate = new Date();
-  //   const hours = newDate.getHours();
-  //   const minutes = newDate.getMinutes();
+  function checkHour(hours, minutes) {
+    if (videoSchedule.initialHour !== videoSchedule.finalHour) {
+      if (
+        hours === videoSchedule.initialHour &&
+        minutes >= videoSchedule.initialMinute
+      ) {
+        return true;
+      } else if (
+        hours === videoSchedule.finalHour &&
+        minutes <= videoSchedule.finalMinute
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    } else if (videoSchedule.initialHour === videoSchedule.finalHour) {
+      if (
+        hours === videoSchedule.initialHour &&
+        minutes >= videoSchedule.initialMinute &&
+        minutes <= videoSchedule.finalMinute
+      ) {
+        return true;
+      } else {
+        return false;
+      }
+    }
 
-  //   if (videoSchedule.initialHour !== videoSchedule.finalHour) {
-  //     if (
-  //       hours === videoSchedule.initialHour &&
-  //       minutes >= videoSchedule.initialMinute
-  //     ) {
-  //       return true;
-  //     } else if (
-  //       hours === videoSchedule.finalHour &&
-  //       minutes <= videoSchedule.finalMinute
-  //     ) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   } else if (videoSchedule.initialHour === videoSchedule.finalHour) {
-  //     if (
-  //       hours === videoSchedule.initialHour &&
-  //       minutes >= videoSchedule.initialMinute &&
-  //       minutes <= videoSchedule.finalMinute
-  //     ) {
-  //       return true;
-  //     } else {
-  //       return false;
-  //     }
-  //   }
-
-  //   return false;
-  // }
+    return false;
+  }
 
   function createOrJoin() {
+    const newDate = new Date();
+    const hours = newDate.getHours();
+    const minutes = newDate.getMinutes();
+
+    // const isVideoCallTime = checkHour(hours, minutes);
     const isVideoCallTime = true;
+
     console.log(isVideoCallTime);
     console.log("chegou aqui");
     //verifica se não existe nenhuma room e então cria uma.
@@ -190,7 +192,6 @@ wss.on("connection", function connection(ws, req) {
     if (ws.status === "onCall") {
       return;
     }
-    leave();
 
     const keys = Object.keys(rooms);
     const length = keys.length;
@@ -337,6 +338,8 @@ wss.on("connection", function connection(ws, req) {
   }
 
   function joinWithNoLimit(roomName) {
+    leave();
+
     const room = roomName;
     let obj;
     rooms[room].push(ws);
@@ -349,6 +352,7 @@ wss.on("connection", function connection(ws, req) {
     };
     send(obj);
   }
+
   function checkCountDown() {
     let newDate = new Date();
     let minutes = newDate.getMinutes();
@@ -429,23 +433,21 @@ wss.on("connection", function connection(ws, req) {
       clearTimeout(heartbeatTimer);
     } catch (error) {}
 
-    if (ws) {
-      if (ws.uid) {
-        clients.splice(clients.indexOf(ws), 1);
+    if (ws && ws.uid) {
+      clients.splice(clients.indexOf(ws), 1);
 
-        let obj = {
-          type: "user_online",
-          totalUsersOnline: clients.length,
-        };
+      let obj = {
+        type: "user_online",
+        totalUsersOnline: clients.length,
+      };
 
-        wss.clients.forEach(function each(client) {
-          if (client.readyState === WebSocket.OPEN) {
-            client.send(JSON.stringify(obj));
-          }
-        });
-      }
-      ws.close();
+      wss.clients.forEach(function each(client) {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(JSON.stringify(obj));
+        }
+      });
     }
+    ws.close();
   }
 });
 
