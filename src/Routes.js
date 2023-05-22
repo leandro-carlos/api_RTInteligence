@@ -45,7 +45,7 @@ routes.get("/checkVersion", LoginController.checkVersion); // Checkar versão do
 // Route Video Call
 
 routes.post("/report", VideoCallController.EnterThreeUsersInCall);
-routes.post("/SendEmail", VideoCallController.SendEmail);
+routes.post("/SendEmail", VideoCallController.sendDailyEmail);
 routes.put("/exitUser", VideoCallController.ExitUser);
 
 // routes.post("/token", VideoCallController.getVideoToken); //Pegar token para entrar em video call.

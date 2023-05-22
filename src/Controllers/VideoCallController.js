@@ -6,6 +6,10 @@ const XLSX = require("xlsx");
 const readXlsxFile = require("read-excel-file");
 const fetch = require("node-fetch");
 const { format } = require("date-fns");
+const moment = require("moment/moment.js");
+const { Op } = require("sequelize");
+
+const cron = require("node-cron");
 
 class VideoCallController {
   static EnterThreeUsersInCall = async (req, res) => {
@@ -53,11 +57,36 @@ class VideoCallController {
       });
   };
 
+  static sendDailyEmail = async (req, res) => {
+    cron.schedule(
+      "30 10 * * *",
+      async () => {
+        this.SendEmail();
+      },
+      {
+        scheduled: true,
+        timezone: "America/Sao_Paulo",
+      }
+    );
+
+    res
+      .status(200)
+      .json({ message: "Agendamento do email realizado com sucesso!" });
+  };
+
   static SendEmail = async (req, res) => {
     const transporter = createTransport(email);
 
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000); // Obtém a data e hora de 24 horas atrás
+
     try {
-      const data = await api_reportCsv.findAll();
+      const data = await api_reportCsv.findAll({
+        where: {
+          createdAt: {
+            [Op.gte]: twentyFourHoursAgo,
+          },
+        },
+      });
 
       const arrayNew = [];
 
@@ -71,6 +100,7 @@ class VideoCallController {
               ? "Não informado"
               : element.dataValues.hourExit,
           Sala: element.dataValues.roomName,
+          "Data da Call": moment(element.dataValues.data).format("DD/MM/YYYY"),
           // "Tempo de duração": Math.floor(
           //   Math.abs(element.dataValues.hourExit - element.dataValues.hourEnter)
           // ),
@@ -99,7 +129,7 @@ class VideoCallController {
       const mailOptions = {
         from: email.auth.user,
         to: "leandro.carlosleo2015@gmail.com",
-        subject: `Logs de chamada - APP Inteligence || ${currentData}`,
+        subject: `Logs de chamada - APP Inteligence | ${currentData}`,
         attachments: [
           { filename: "Relatório de chamadas.xlsx", path: "./reports.xlsx" },
         ],
