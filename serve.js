@@ -9,19 +9,19 @@ const io = new Server(httpServer, {
 const mysql = require("mysql");
 const { create } = require("domain");
 
-const connection = mysql.createConnection({
-  host: "localhost",
-  user: "root",
-  password: "",
-  database: "rtinteligence",
-});
-
 // const connection = mysql.createConnection({
-//   host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
-//   user: "intelligenceAdm",
-//   password: "intelligence147258369",
+//   host: "localhost",
+//   user: "root",
+//   password: "",
 //   database: "rtinteligence",
 // });
+
+const connection = mysql.createConnection({
+  host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
+  user: "intelligenceAdm",
+  password: "intelligence147258369",
+  database: "rtinteligence",
+});
 
 connection.connect((error) => {
   if (error) {
@@ -34,13 +34,19 @@ connection.connect((error) => {
 let rooms = [];
 
 function checkRoom() {
+  let choosenRoom = null;
   rooms.forEach((element) => {
     if (element.usersCount < 3) {
-      return element;
+      choosenRoom = element;
+      return;
     }
   });
 
-  createRoom(8);
+  if (choosenRoom !== null) {
+    return choosenRoom;
+  } else {
+    return createRoom(8);
+  }
 }
 
 function createRoom(length) {
@@ -52,7 +58,7 @@ function createRoom(length) {
 
   const newRoom = {
     name: result,
-    usersCount: 1,
+    usersCount: 0,
   };
 
   rooms.push(newRoom);
@@ -60,8 +66,17 @@ function createRoom(length) {
   return newRoom;
 }
 
-function createCallOnBD(newData) {
+function createCallOnBD(roomObject) {
   // Insere os dados na tabela
+
+  let newData = {
+    name: roomObject.name,
+    usersOnline: roomObject.usersCount,
+    id_user_one: roomObject.id_list[0],
+    id_user_two: roomObject.id_list[1],
+    id_user_three: roomObject.id_list[2],
+  };
+
   connection.query(
     "INSERT INTO api_channels SET ?",
     newData,
@@ -70,112 +85,157 @@ function createCallOnBD(newData) {
         console.error("Erro ao inserir dados:", error.message);
       } else {
         console.log("Dados inseridos com sucesso!");
+        rooms = rooms.filter((obj) => obj.name !== roomObject.name);
       }
     }
   );
 }
 
 io.on("connection", (socket) => {
-  let beyondLimitCountDown;
   let roomChannelName;
+  let beyondLimitCountDown;
+  let position;
+  let callEndHour;
 
-  function waitingInQueue(room, position) {
+  function waitingInQueue(room) {
     const timer = position === "first" ? 60000 : 80000;
     beyondLimitCountDown = setTimeout(function () {
       searchCallWithThree(room);
     }, timer);
+    console.log("ativou o countdown");
   }
 
   function clearTimeoutBeyond() {
     clearTimeout(beyondLimitCountDown);
+    console.log("resetou o countdown");
   }
 
-  console.log("conectou um novo socket");
-
   socket.on("newLogin", (arg) => {
+    //contagem de users online
     const count = io.engine.clientsCount;
     console.log("emitiu novo login", count);
     socket.emit("usersOnlineCountChange", count);
   });
 
   socket.on("startNewCallSearch", (arg) => {
+    //começa a busca de uma nova call, entra em uma room se existir ou cria uma caso não.
     console.log("chegou uma newcall", arg);
     const id_user = arg;
 
     const room = checkRoom();
+    console.log(room);
     const roomName = room.name;
     roomChannelName = roomName;
     const usersCount = room.usersCount;
-    const objetoEncontrado = rooms.find((room) => room.name === roomName);
+
+    const index = rooms.findIndex((room) => room.name === roomName);
 
     socket.join(room.name);
 
-    if (room.usersCount === 1) {
-      socket.to(room.name).emit("message", {
+    if (usersCount === 0) {
+      io.to(room.name).emit("message", {
         channelName: roomName,
         status: "WAITING_MORE_USERS",
-        usersCount: usersCount,
+        usersCount: usersCount + 1,
       });
-      if (objetoEncontrado) {
-        objetoEncontrado = {
-          ...objetoEncontrado,
-          id_user_one: id_user,
+      if (index !== -1) {
+        rooms[index] = {
+          ...rooms[index],
+          usersCount: usersCount + 1,
+          id_list: [id_user],
         };
       }
-      waitingInQueue(objetoEncontrado, "first");
-    } else {
-      const newUsersCount = usersCount + 1;
+      position = "first";
+      console.log(rooms[0], "rooms primeiro");
 
-      if (newUsersCount === 2) {
-        socket.to(room.name).emit("message", {
-          channelName: roomName,
-          status: "WAITING_MORE_USERS",
-          usersCount: usersCount,
-        });
-        if (objetoEncontrado) {
-          objetoEncontrado = {
-            ...objetoEncontrado,
-            id_user_two: id_user,
-          };
-        }
-      }
-      if (newUsersCount === 3) {
-        socket.to(room.name).emit("message", {
-          channelName: roomName,
-          status: "CALL_START",
-          usersCount: usersCount,
-        });
+      waitingInQueue(rooms[index]);
+    } else if (usersCount === 1) {
+      io.to(room.name).emit("message", {
+        channelName: roomName,
+        status: "WAITING_MORE_USERS",
+        usersCount: usersCount + 1,
+      });
 
-        objetoEncontrado = {
-          ...objetoEncontrado,
-          id_user_three: id_user,
+      if (index !== -1) {
+        rooms[index] = {
+          ...rooms[index],
+          usersCount: usersCount + 1,
         };
 
-        createCallOnBD(objetoEncontrado);
+        rooms[index].id_list.push(id_user);
       }
+
+      console.log(rooms, "second user rooms");
+
+      position = "second";
+    } else if (usersCount === 2) {
+      socket.to(room.name).emit("message", {
+        channelName: roomName,
+        status: "CALL_START",
+        usersCount: usersCount + 1,
+      });
+
+      if (index !== -1) {
+        rooms[index] = {
+          ...rooms[index],
+          usersCount: usersCount + 1,
+        };
+
+        rooms[index].id_list.push(id_user);
+      }
+
+      createCallOnBD(rooms[index]);
     }
   });
 
-  socket.on("resetCountDown", (arg) => {
-    const position = arg;
+  socket.on("resetCountDown", () => {
+    // reseta o countdown para entrar em um canal com 3 pessoas, acionado quando um segundo user
+    // entra na fila
     clearTimeoutBeyond();
 
-    const objetoEncontrado = rooms.find(
-      (room) => room.name === roomChannelName
-    );
+    const index = rooms.findIndex((room) => room.name === roomChannelName);
 
-    waitingInQueue(objetoEncontrado, position);
+    waitingInQueue(rooms[index]);
   });
 
-  socket.on("stopCountDown", () => {
+  socket.on("stopCountDown", (room) => {
+    //acionada qnd os 3 users entram em call, para o countdown para entrar em um canal com 3 pessoas.
     clearTimeoutBeyond();
   });
 
-  function searchCallWithThree(roomObject) {
-    const index = rooms.indexOf(roomObject);
-    const room = rooms[index];
-    rooms = rooms.filter((obj) => obj.name !== room.name);
+  socket.on("cancelSearching", (arg) => {
+    // cancela a busca e sai da room, acionada quando o user clica em voltar na tela de video call ou clica
+    // em cancelar
+    console.log("cancelar");
+    const user_id = arg;
+    console.log(rooms);
+    const index = rooms.findIndex((room) => room.name === roomChannelName);
+
+    if (index !== -1) {
+      rooms[index] = {
+        ...rooms[index],
+        usersCount: rooms[index].usersCount - 1,
+      };
+
+      console.log("diminuiu 1 user");
+
+      const filter = rooms[index].id_list.filter((id) => id !== user_id);
+      rooms[index].id_list = filter;
+      console.log("filtrou os ids", rooms);
+      clearTimeoutBeyond();
+    }
+  });
+
+  socket.on("checkTimer", () => {
+    if (callEndHour) {
+    } else {
+    }
+  });
+
+  function searchCallWithThree() {
+    rooms = rooms.filter((obj) => obj.name !== roomChannelName);
     socket.leave(roomChannelName);
+    console.log(rooms);
 
     connection.query(
       "SELECT * FROM api_channels WHERE usersOnline = 3",
@@ -184,6 +244,24 @@ io.on("connection", (socket) => {
           console.error("Erro ao inserir dados:", error.message);
         } else {
           const result = results[0];
+          console.log(result);
+          socket.join(result.name);
+          socket.emit("message", {
+            channelName: result.name,
+            status: "CALL_START",
+            usersCount: result.usersOnline + 1,
+          });
+          connection.query(
+            "UPDATE api_channels SET usersOnline = ? WHERE id = ?",
+            [result.usersOnline + 1, result.id],
+            (error, results, fields) => {
+              if (error) {
+                console.error("Erro ao executar a atualização:", error.message);
+              } else {
+                console.log("Atualização realizada com sucesso!");
+              }
+            }
+          );
         }
       }
     );
