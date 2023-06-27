@@ -98,7 +98,6 @@ io.on("connection", (socket) => {
   let position;
   let user_id;
   let callEndHour;
-  let roomCountDown;
 
   function waitingInQueue(room) {
     const timer = position === "first" ? 60000 : 80000;
@@ -219,7 +218,8 @@ io.on("connection", (socket) => {
     if (index !== -1) {
       rooms[index] = {
         ...rooms[index],
-        usersCount: rooms[index].usersCount - 1,
+        usersCount:
+          rooms[index].usersCount <= 0 ? 0 : rooms[index].usersCount - 1,
       };
 
       const filter = rooms[index].id_list.filter((id) => id !== user_id);
