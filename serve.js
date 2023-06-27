@@ -290,10 +290,10 @@ io.on("connection", (socket) => {
           } else {
             const result = results[0];
             console.log(result);
-            callEndHour = {
-              hourEnd: result.hourEnd,
-              minuteEnd: result.minuteEnd,
-            };
+            // callEndHour = {
+            //   hourEnd: result.hourEnd,
+            //   minuteEnd: result.minuteEnd,
+            // };
           }
         }
       );
