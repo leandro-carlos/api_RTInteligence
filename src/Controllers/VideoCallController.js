@@ -210,7 +210,7 @@ class VideoCallController {
             .status(200)
             .json({ message: "Registro excluído do banco de dados!" });
         } else {
-          await YourModel.decrement("usersOnline", {
+          await api_channels.decrement("usersOnline", {
             where: { name: channel_name },
           });
           res

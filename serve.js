@@ -116,7 +116,7 @@ io.on("connection", (socket) => {
     //contagem de users online
     const count = io.engine.clientsCount;
     console.log("emitiu novo login", count);
-    socket.emit("usersOnlineCountChange", count);
+    io.emit("usersOnlineCountChange", count);
   });
 
   socket.on("startNewCallSearch", (arg) => {
