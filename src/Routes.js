@@ -47,6 +47,7 @@ routes.get("/checkVersion", LoginController.checkVersion); // Checkar versão do
 routes.post("/report", VideoCallController.EnterThreeUsersInCall);
 routes.post("/SendEmail", VideoCallController.sendDailyEmail);
 routes.put("/exitUser", VideoCallController.ExitUser);
+routes.get("/verifyHourIsAvailable", VideoCallController.verifyHourIsAvailable);
 
 routes.post("/checkReconnection", VideoCallController.CheckReconection);
 routes.post("/leaveChannel", VideoCallController.leaveChannel);

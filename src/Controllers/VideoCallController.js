@@ -1,14 +1,10 @@
 const { email } = require("../Config/Email.js");
 const { api_reportCsv, api_channels } = require("../Models/index.js");
-const fs = require("fs");
 const { createTransport } = require("nodemailer");
 const XLSX = require("xlsx");
-const readXlsxFile = require("read-excel-file");
-const fetch = require("node-fetch");
 const { format } = require("date-fns");
 const moment = require("moment/moment.js");
 const { Op } = require("sequelize");
-
 const cron = require("node-cron");
 
 class VideoCallController {
@@ -223,6 +219,45 @@ class VideoCallController {
     } catch (error) {
       console.error(error);
       res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  };
+
+  static verifyHourIsAvailable = async (req, res) => {
+    try {
+      const hourServer = await api_hoursControlls.findAll();
+
+      const hourCurrent = new Date();
+      const hourCurrentServer = hourCurrent.getHours();
+      const minuteCurrentServer = hourCurrent.getMinutes();
+
+      const hourStart = parseInt(hourServer[0]?.dataValues?.hourStart);
+      const minuteStart = parseInt(hourServer[0]?.dataValues?.minuteStart);
+      const hourEnd = parseInt(hourServer[0]?.dataValues?.hourEnd);
+      const minuteEnd = parseInt(hourServer[0]?.dataValues?.minuteEnd);
+
+      if (
+        (hourCurrentServer > hourStart ||
+          (hourCurrentServer === hourStart &&
+            minuteCurrentServer >= minuteStart)) &&
+        (hourCurrentServer < hourEnd ||
+          (hourCurrentServer === hourEnd && minuteCurrentServer <= minuteEnd))
+      ) {
+        res
+          .status(200)
+          .json({ available: true, msg: "Horario da video call disponível" });
+      } else {
+        res.status(202).json({
+          available: false,
+          msg: "Horario da video call indisponivel",
+        });
+      }
+    } catch (error) {
+      console.log(error, "erro no verifyHourIsAvailable");
+      res.send(400).json({
+        status: false,
+        message:
+          "Deu erro interno no servidor, contate o administrador do sistema.",
+      });
     }
   };
 }
