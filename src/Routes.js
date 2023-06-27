@@ -47,6 +47,7 @@ routes.get("/checkVersion", LoginController.checkVersion); // Checkar versão do
 routes.post("/report", VideoCallController.EnterThreeUsersInCall);
 routes.post("/SendEmail", VideoCallController.sendDailyEmail);
 routes.put("/exitUser", VideoCallController.ExitUser);
+routes.get("/verifyHourIsAvailable", VideoCallController.verifyHourIsAvailable);
 
 // routes.post("/token", VideoCallController.getVideoToken); //Pegar token para entrar em video call.
 // routes.post("/reconect", VideoCallController.reconect); // reconectar no canal caso naõ tenha passado x minutos.
