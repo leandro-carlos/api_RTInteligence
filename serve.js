@@ -399,7 +399,7 @@ io.on("connection", (socket) => {
             );
           }
         } else {
-          res.status(404).json({ message: "Registro não encontrado!" });
+          console.log("Registro não encontrado!");
         }
       }
     });
