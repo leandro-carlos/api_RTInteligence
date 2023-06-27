@@ -113,13 +113,6 @@ io.on("connection", (socket) => {
     console.log("resetou o countdown");
   }
 
-  function startRoomCountDown() {
-    roomCountDown = setTimeout(function () {
-      deleteRoom();
-    }, 90000);
-    console.log("começou o countdown da sala");
-  }
-
   socket.on("newLogin", (arg) => {
     //contagem de users online
     const count = io.engine.clientsCount;
@@ -261,13 +254,6 @@ io.on("connection", (socket) => {
   });
 
   socket.on("checkTimer", () => {
-    if (!roomCountDown) {
-      startRoomCountDown();
-    } else {
-      clearTimeout(roomCountDown);
-      console.log("limpou o delete room");
-    }
-
     if (callEndHour) {
       const newDate = new Date();
       const hours = newDate.getHours();
@@ -367,17 +353,58 @@ io.on("connection", (socket) => {
   }
 
   function deleteRoom() {
-    connection.query(
-      "DELETE FROM api_channels WHERE name = ?",
-      [roomChannelName],
-      (error, results, fields) => {
-        if (error) {
-          console.error("Erro ao executar a exclusão:", error.message);
+    const findQuery = "SELECT * FROM api_channels WHERE name = ?";
+    connection.query(findQuery, [roomChannelName], (findError, findResults) => {
+      if (findError) {
+        console.error("Erro ao executar a consulta:", findError.message);
+        res.status(500).json({ message: "Erro interno do servidor" });
+      } else {
+        const result = findResults[0];
+
+        if (result) {
+          const updatedUsersOnline = result.usersOnline - 1;
+
+          if (updatedUsersOnline === 0) {
+            const deleteQuery = "DELETE FROM api_channels WHERE name = ?";
+            connection.query(deleteQuery, [roomChannelName], (deleteError) => {
+              if (deleteError) {
+                console.error(
+                  "Erro ao executar a exclusão:",
+                  deleteError.message
+                );
+                res.status(500).json({ message: "Erro interno do servidor" });
+              } else {
+                res
+                  .status(200)
+                  .json({ message: "Registro excluído do banco de dados!" });
+              }
+            });
+          } else {
+            const updateQuery =
+              "UPDATE api_channels SET usersOnline = ? WHERE name = ?";
+            connection.query(
+              updateQuery,
+              [updatedUsersOnline, roomChannelName],
+              (updateError) => {
+                if (updateError) {
+                  console.error(
+                    "Erro ao executar a atualização:",
+                    updateError.message
+                  );
+                  res.status(500).json({ message: "Erro interno do servidor" });
+                } else {
+                  res
+                    .status(200)
+                    .json({ message: "Número de usuários online reduzido!" });
+                }
+              }
+            );
+          }
         } else {
-          console.log("Exclusão realizada com sucesso!");
+          res.status(404).json({ message: "Registro não encontrado!" });
         }
       }
-    );
+    });
   }
 });
 
