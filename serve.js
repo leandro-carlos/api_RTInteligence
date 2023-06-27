@@ -306,6 +306,8 @@ io.on("connection", (socket) => {
     const count = io.engine.clientsCount;
     io.emit("usersOnlineCountChange", count);
     console.log("usuario deslogou", count);
+
+    deleteRoom();
   });
 
   function searchCallWithThree() {
