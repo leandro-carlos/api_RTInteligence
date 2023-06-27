@@ -234,12 +234,12 @@ io.on("connection", (socket) => {
     socket.emit("message", {
       channelName: obj.name,
       status: "CALL_START",
-      usersCount: obj.usersCount,
+      usersCount: obj.usersOnline,
     });
     console.log(obj, "obj reconnect");
     connection.query(
       "UPDATE api_channels SET usersOnline = ? WHERE name = ?",
-      [obj.usersCount + 1, obj.name],
+      [obj.usersOnline + 1, obj.name],
       (error, results, fields) => {
         if (error) {
           console.error("Erro ao executar a atualização:", error.message);
@@ -262,7 +262,7 @@ io.on("connection", (socket) => {
     console.log(rooms);
 
     connection.query(
-      "SELECT * FROM api_channels WHERE usersOnline = 3 AND status <> 'full'",
+      "SELECT * FROM api_channels WHERE usersOnline <= 3 AND status <> 'full'",
       (error, results, fields) => {
         if (error) {
           console.error("Erro ao encontrar dados:", error.message);
