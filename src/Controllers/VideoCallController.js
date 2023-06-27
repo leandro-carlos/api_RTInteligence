@@ -179,6 +179,7 @@ class VideoCallController {
           message: "Usuário encontrado!",
           status: true,
           name: result.name,
+          usersOnline: result.usersOnline,
         });
       } else {
         // O id_user não foi encontrado em nenhum dos campos

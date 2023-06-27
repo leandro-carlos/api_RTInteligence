@@ -228,6 +228,28 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("callReconnect", (arg) => {
+    const obj = arg;
+    roomChannelName = obj.name;
+    socket.join(obj.name);
+    socket.emit("message", {
+      channelName: obj.name,
+      status: "CALL_START",
+      usersCount: obj.usersCount,
+    });
+    connection.query(
+      "UPDATE api_channels SET usersOnline = ? WHERE name = ?",
+      [obj.usersCount + 1, obj.name],
+      (error, results, fields) => {
+        if (error) {
+          console.error("Erro ao executar a atualização:", error.message);
+        } else {
+          console.log("Atualização realizada com sucesso!");
+        }
+      }
+    );
+  });
+
   socket.on("checkTimer", () => {
     if (callEndHour) {
     } else {
