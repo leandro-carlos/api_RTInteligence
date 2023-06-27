@@ -86,6 +86,7 @@ function createCallOnBD(roomObject) {
       } else {
         console.log("Dados inseridos com sucesso!");
         rooms = rooms.filter((obj) => obj.name !== roomObject.name);
+        console.log(rooms, "final rooms");
       }
     }
   );
@@ -169,7 +170,7 @@ io.on("connection", (socket) => {
 
       position = "second";
     } else if (usersCount === 2) {
-      socket.to(room.name).emit("message", {
+      io.to(room.name).emit("message", {
         channelName: roomName,
         status: "CALL_START",
         usersCount: usersCount + 1,
@@ -183,7 +184,7 @@ io.on("connection", (socket) => {
 
         rooms[index].id_list.push(id_user);
       }
-
+      console.log(rooms);
       createCallOnBD(rooms[index]);
     }
   });
