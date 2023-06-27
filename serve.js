@@ -237,6 +237,7 @@ io.on("connection", (socket) => {
       status: "CALL_START",
       usersCount: obj.usersCount,
     });
+    console.log(obj, "obj reconnect");
     connection.query(
       "UPDATE api_channels SET usersOnline = ? WHERE name = ?",
       [obj.usersCount + 1, obj.name],
