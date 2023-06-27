@@ -1,5 +1,9 @@
 const { email } = require("../Config/Email.js");
-const { api_reportCsv, api_channels } = require("../Models/index.js");
+const {
+  api_reportCsv,
+  api_channels,
+  api_hoursControlls,
+} = require("../Models/index.js");
 const { createTransport } = require("nodemailer");
 const XLSX = require("xlsx");
 const { format } = require("date-fns");
@@ -249,6 +253,10 @@ class VideoCallController {
         res.status(202).json({
           available: false,
           msg: "Horario da video call indisponivel",
+          hourStart: hourStart < 10 ? `0${hourStart}` : hourStart,
+          minuteStart: minuteStart < 10 ? `0${minuteStart}` : minuteStart,
+          hourEnd: hourEnd,
+          minuteEnd: minuteEnd,
         });
       }
     } catch (error) {
