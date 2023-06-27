@@ -374,11 +374,9 @@ io.on("connection", (socket) => {
                   "Erro ao executar a exclusão:",
                   deleteError.message
                 );
-                res.status(500).json({ message: "Erro interno do servidor" });
+                console.log("Erro interno do servidor");
               } else {
-                res
-                  .status(200)
-                  .json({ message: "Registro excluído do banco de dados!" });
+                console.log("Registro excluído do banco de dados!");
               }
             });
           } else {
@@ -393,11 +391,9 @@ io.on("connection", (socket) => {
                     "Erro ao executar a atualização:",
                     updateError.message
                   );
-                  res.status(500).json({ message: "Erro interno do servidor" });
+                  console.log("Erro interno do servidor");
                 } else {
-                  res
-                    .status(200)
-                    .json({ message: "Número de usuários online reduzido!" });
+                  console.log("Número de usuários online reduzido!");
                 }
               }
             );
