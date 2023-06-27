@@ -273,9 +273,15 @@ io.on("connection", (socket) => {
       const newDate = new Date();
       const hours = newDate.getHours();
       const minutes = newDate.getMinutes();
-      console.log(hours, minutes);
-      if (hours === callEndHour.hourEnd) {
-        const diff = callEndHour.minuteEnd - minutes;
+
+      const finalHour = parseInt(callEndHour.hourEnd);
+      const finalMinute = parseInt(callEndHour.minuteEnd);
+      console.log(hours, minutes, finalHour, finalMinute);
+
+      if (hours === finalHour) {
+        const diff = finalMinute - minutes;
+        console.log(hours, minutes, diff);
+
         if (diff === 3) {
           io.to(roomChannelName).emit("warn", {
             status: "COUNTDOWN",
