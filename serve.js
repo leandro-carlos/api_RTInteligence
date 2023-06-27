@@ -7,9 +7,6 @@ const io = new Server(httpServer, {
   /* options */
 });
 const mysql = require("mysql");
-const { create } = require("domain");
-const { calendarFormat } = require("moment");
-const { min } = require("date-fns");
 
 // const connection = mysql.createConnection({
 //   host: "localhost",
@@ -141,6 +138,7 @@ io.on("connection", (socket) => {
         channelName: roomName,
         status: "WAITING_MORE_USERS",
         usersCount: usersCount + 1,
+        info: "Caso você não seja conectado a um canal com 3 usuários em 3 minutos, você será somado a um canal já preenchido.",
       });
       if (index !== -1) {
         rooms[index] = {
@@ -158,6 +156,7 @@ io.on("connection", (socket) => {
         channelName: roomName,
         status: "WAITING_MORE_USERS",
         usersCount: usersCount + 1,
+        info: "Caso você não seja conectado a um canal com 3 usuários em 3 minutos, você será somado a um canal já preenchido.",
       });
 
       if (index !== -1) {
@@ -290,10 +289,10 @@ io.on("connection", (socket) => {
           } else {
             const result = results[0];
             console.log(result);
-            // callEndHour = {
-            //   hourEnd: result.hourEnd,
-            //   minuteEnd: result.minuteEnd,
-            // };
+            callEndHour = {
+              hourEnd: result.hourEnd,
+              minuteEnd: result.minuteEnd,
+            };
           }
         }
       );
@@ -313,23 +312,33 @@ io.on("connection", (socket) => {
         } else {
           const result = results[0];
           console.log(result);
-          socket.join(result.name);
-          socket.emit("message", {
-            channelName: result.name,
-            status: "CALL_START",
-            usersCount: result.usersOnline + 1,
-          });
-          connection.query(
-            "UPDATE api_channels SET usersOnline = ?, status = 'full', id_user_fourth = ? WHERE id = ?",
-            [result.usersOnline + 1, user_id, result.id],
-            (error, results, fields) => {
-              if (error) {
-                console.error("Erro ao executar a atualização:", error.message);
-              } else {
-                console.log("Atualização realizada com sucesso!");
+          if (result) {
+            socket.join(result.name);
+            socket.emit("message", {
+              channelName: result.name,
+              status: "CALL_START",
+              usersCount: result.usersOnline + 1,
+            });
+            connection.query(
+              "UPDATE api_channels SET usersOnline = ?, status = 'full', id_user_fourth = ? WHERE id = ?",
+              [result.usersOnline + 1, user_id, result.id],
+              (error, results, fields) => {
+                if (error) {
+                  console.error(
+                    "Erro ao executar a atualização:",
+                    error.message
+                  );
+                } else {
+                  console.log("Atualização realizada com sucesso!");
+                }
               }
-            }
-          );
+            );
+          } else {
+            socket.emit("message", {
+              retry: true,
+              info: "Não há canais disponíveis ou todos já possuem um usuário realocado\nvocê voltará para a fila",
+            });
+          }
         }
       }
     );
