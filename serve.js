@@ -320,7 +320,7 @@ io.on("connection", (socket) => {
     io.emit("usersOnlineCountChange", count);
     console.log("usuario deslogou", count);
     console.log("vai deletar room?", alreadyExited);
-    if (alreadyExited === true) {
+    if (alreadyExited === false) {
       deleteRoom();
     }
   });
