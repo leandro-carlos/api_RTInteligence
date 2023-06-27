@@ -316,6 +316,12 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("disconnect", () => {
+    const count = io.engine.clientsCount;
+    io.emit("usersOnlineCountChange", count);
+    console.log("usuario deslogou", count);
+  });
+
   function searchCallWithThree() {
     rooms = rooms.filter((obj) => obj.name !== roomChannelName);
     socket.leave(roomChannelName);
@@ -352,8 +358,7 @@ io.on("connection", (socket) => {
             );
           } else {
             socket.emit("message", {
-              retry: true,
-              info: "Não há canais disponíveis ou todos já possuem um usuário realocado\nvocê voltará para a fila",
+              status: "WAITING",
             });
           }
         }
