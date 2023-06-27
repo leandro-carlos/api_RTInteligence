@@ -8,6 +8,8 @@ const io = new Server(httpServer, {
 });
 const mysql = require("mysql");
 const { create } = require("domain");
+const { calendarFormat } = require("moment");
+const { min } = require("date-fns");
 
 // const connection = mysql.createConnection({
 //   host: "localhost",
@@ -252,7 +254,49 @@ io.on("connection", (socket) => {
 
   socket.on("checkTimer", () => {
     if (callEndHour) {
+      const newDate = new Date();
+      const hours = newDate.getHours();
+      const minutes = newDate.getMinutes();
+      if (hours === callEndHour.hourEnd) {
+        const diff = callEndHour.minuteEnd - minutes;
+        if (diff === 3) {
+          io.to(roomChannelName).emit("warn", {
+            status: "COUNTDOWN",
+            timeleft: 3,
+          });
+        } else if (diff === 2) {
+          io.to(roomChannelName).emit("warn", {
+            status: "COUNTDOWN",
+            timeleft: 2,
+          });
+        } else if (diff === 1) {
+          io.to(roomChannelName).emit("warn", {
+            status: "COUNTDOWN",
+            timeleft: 1,
+          });
+        } else if (diff <= 0) {
+          io.to(roomChannelName).emit("warn", {
+            status: "SHUTDOWN",
+            timeleft: 1,
+          });
+        }
+      }
     } else {
+      connection.query(
+        "SELECT * FROM api_hoursControlls",
+        (error, results, fields) => {
+          if (error) {
+            console.error("Erro ao encontrar dados:", error.message);
+          } else {
+            const result = results[0];
+            console.log(result);
+            callEndHour = {
+              hourEnd: result.hourEnd,
+              minuteEnd: result.minuteEnd,
+            };
+          }
+        }
+      );
     }
   });
 
