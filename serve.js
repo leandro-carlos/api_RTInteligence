@@ -312,12 +312,14 @@ io.on("connection", (socket) => {
 
   socket.on("exitedRoom", () => {
     alreadyExited = true;
+    console.log("ja saiu da room", alreadyExited);
   });
 
   socket.on("disconnect", () => {
     const count = io.engine.clientsCount;
     io.emit("usersOnlineCountChange", count);
     console.log("usuario deslogou", count);
+    console.log("vai deletar room?", alreadyExited);
     if (alreadyExited === true) {
       deleteRoom();
     }
