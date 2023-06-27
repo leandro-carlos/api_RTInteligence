@@ -230,6 +230,12 @@ io.on("connection", (socket) => {
 
       const filter = rooms[index].id_list.filter((id) => id !== user_id);
       rooms[index].id_list = filter;
+      socket.to(roomChannelName).emit("message", {
+        channelName: roomChannelName,
+        status: "WAITING_MORE_USERS",
+        usersCount: rooms[index].usersCount,
+        info: "Caso você não seja conectado a um canal com 3 usuários em 3 minutos, você será somado a um canal já preenchido.",
+      });
       socket.leave(roomChannelName);
       console.log("filtrou os ids", rooms);
       clearTimeoutBeyond();
