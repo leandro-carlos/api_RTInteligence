@@ -7,7 +7,6 @@ const io = new Server(httpServer, {
   /* options */
 });
 const mysql = require("mysql");
-const { start } = require("repl");
 
 // const connection = mysql.createConnection({
 //   host: "localhost",
@@ -98,6 +97,8 @@ io.on("connection", (socket) => {
   let position;
   let user_id;
   let callEndHour;
+  let alreadyExited;
+  let alreadyCanceled;
 
   function waitingInQueue(room) {
     const timer = position === "first" ? 60000 : 80000;
@@ -133,6 +134,7 @@ io.on("connection", (socket) => {
     const index = rooms.findIndex((room) => room.name === roomName);
 
     socket.join(room.name);
+    alreadyCanceled = false;
 
     if (usersCount === 0) {
       io.to(room.name).emit("message", {
@@ -210,7 +212,11 @@ io.on("connection", (socket) => {
   socket.on("cancelSearching", (arg) => {
     // cancela a busca e sai da room, acionada quando o user clica em voltar na tela de video call ou clica
     // em cancelar
+    if (alreadyCanceled === true) {
+      return;
+    }
     console.log("cancelar");
+    alreadyCanceled = true;
     const user_id = arg;
     console.log(rooms);
     const index = rooms.findIndex((room) => room.name === roomChannelName);
@@ -231,6 +237,8 @@ io.on("connection", (socket) => {
   });
 
   socket.on("callReconnect", (arg) => {
+    alreadyExited = false;
+    alreadyCanceled = false;
     const obj = arg;
     roomChannelName = obj.name;
     socket.join(obj.name);
@@ -302,12 +310,17 @@ io.on("connection", (socket) => {
     }
   });
 
+  socket.on("exitedRoom", () => {
+    alreadyExited = true;
+  });
+
   socket.on("disconnect", () => {
     const count = io.engine.clientsCount;
     io.emit("usersOnlineCountChange", count);
     console.log("usuario deslogou", count);
-
-    deleteRoom();
+    if (alreadyExited === true) {
+      deleteRoom();
+    }
   });
 
   function searchCallWithThree() {
