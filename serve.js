@@ -96,6 +96,7 @@ io.on("connection", (socket) => {
   let roomChannelName;
   let beyondLimitCountDown;
   let position;
+  let user_id;
   let callEndHour;
 
   function waitingInQueue(room) {
@@ -122,7 +123,7 @@ io.on("connection", (socket) => {
     //começa a busca de uma nova call, entra em uma room se existir ou cria uma caso não.
     console.log("chegou uma newcall", arg);
     const id_user = arg;
-
+    user_id = id_user;
     const room = checkRoom();
     console.log(room);
     const roomName = room.name;
@@ -239,10 +240,10 @@ io.on("connection", (socket) => {
     console.log(rooms);
 
     connection.query(
-      "SELECT * FROM api_channels WHERE usersOnline = 3",
+      "SELECT * FROM api_channels WHERE usersOnline = 3 AND status <> 'full'",
       (error, results, fields) => {
         if (error) {
-          console.error("Erro ao inserir dados:", error.message);
+          console.error("Erro ao encontrar dados:", error.message);
         } else {
           const result = results[0];
           console.log(result);
@@ -253,8 +254,8 @@ io.on("connection", (socket) => {
             usersCount: result.usersOnline + 1,
           });
           connection.query(
-            "UPDATE api_channels SET usersOnline = ? WHERE id = ?",
-            [result.usersOnline + 1, result.id],
+            "UPDATE api_channels SET usersOnline = ?, status = 'full', id_user_fourth = ? WHERE id = ?",
+            [result.usersOnline + 1, user_id, result.id],
             (error, results, fields) => {
               if (error) {
                 console.error("Erro ao executar a atualização:", error.message);

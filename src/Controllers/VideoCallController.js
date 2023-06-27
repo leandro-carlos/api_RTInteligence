@@ -1,5 +1,5 @@
 const { email } = require("../Config/Email.js");
-const { api_reportCsv } = require("../Models/index.js");
+const { api_reportCsv, api_channels } = require("../Models/index.js");
 const fs = require("fs");
 const { createTransport } = require("nodemailer");
 const XLSX = require("xlsx");
@@ -155,6 +155,73 @@ class VideoCallController {
         message: "Ocorreu um erro interno no servidor, tente novamente.!",
         err,
       });
+    }
+  };
+
+  static CheckReconection = async (req, res) => {
+    const { id_user } = req.body;
+
+    try {
+      const result = await api_channels.findOne({
+        where: {
+          [Op.or]: [
+            { id_user_one: id_user },
+            { id_user_two: id_user },
+            { id_user_three: id_user },
+            { id_user_fourth: id_user },
+          ],
+        },
+      });
+
+      if (result) {
+        // O id_user foi encontrado em um dos campos
+        res.status(200).json({
+          message: "Usuário encontrado!",
+          status: true,
+          name: result.name,
+        });
+      } else {
+        // O id_user não foi encontrado em nenhum dos campos
+        res
+          .status(200)
+          .json({ message: "Usuário não encontrado!", status: false });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erro interno do servidor" });
+    }
+  };
+
+  static leaveChannel = async (req, res) => {
+    const { channel_name } = req.body;
+
+    try {
+      const result = await api_channels.findOne({
+        where: { name: channel_name },
+      });
+
+      if (result) {
+        const updatedUsersOnline = result.usersOnline - 1;
+
+        if (updatedUsersOnline === 0) {
+          await api_channels.destroy({ where: { name: channel_name } });
+          res
+            .status(200)
+            .json({ message: "Registro excluído do banco de dados!" });
+        } else {
+          await YourModel.decrement("usersOnline", {
+            where: { name: channel_name },
+          });
+          res
+            .status(200)
+            .json({ message: "Número de usuários online reduzido!" });
+        }
+      } else {
+        res.status(404).json({ message: "Registro não encontrado!" });
+      }
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erro interno do servidor" });
     }
   };
 }
