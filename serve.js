@@ -219,10 +219,9 @@ io.on("connection", (socket) => {
         usersCount: rooms[index].usersCount - 1,
       };
 
-      console.log("diminuiu 1 user");
-
       const filter = rooms[index].id_list.filter((id) => id !== user_id);
       rooms[index].id_list = filter;
+      socket.leave(roomChannelName);
       console.log("filtrou os ids", rooms);
       clearTimeoutBeyond();
     }
