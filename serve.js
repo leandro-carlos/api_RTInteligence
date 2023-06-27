@@ -7,6 +7,7 @@ const io = new Server(httpServer, {
   /* options */
 });
 const mysql = require("mysql");
+const { start } = require("repl");
 
 // const connection = mysql.createConnection({
 //   host: "localhost",
@@ -97,6 +98,7 @@ io.on("connection", (socket) => {
   let position;
   let user_id;
   let callEndHour;
+  let roomCountDown;
 
   function waitingInQueue(room) {
     const timer = position === "first" ? 60000 : 80000;
@@ -109,6 +111,13 @@ io.on("connection", (socket) => {
   function clearTimeoutBeyond() {
     clearTimeout(beyondLimitCountDown);
     console.log("resetou o countdown");
+  }
+
+  function startRoomCountDown() {
+    roomCountDown = setTimeout(function () {
+      deleteRoom();
+    }, 90000);
+    console.log("começou o countdown da sala");
   }
 
   socket.on("newLogin", (arg) => {
@@ -252,6 +261,13 @@ io.on("connection", (socket) => {
   });
 
   socket.on("checkTimer", () => {
+    if (!roomCountDown) {
+      startRoomCountDown();
+    } else {
+      clearTimeout(roomCountDown);
+      console.log("limpou o delete room");
+    }
+
     if (callEndHour) {
       const newDate = new Date();
       const hours = newDate.getHours();
@@ -278,6 +294,7 @@ io.on("connection", (socket) => {
             status: "SHUTDOWN",
             timeleft: 1,
           });
+          deleteRoom();
         }
       }
     } else {
@@ -339,6 +356,20 @@ io.on("connection", (socket) => {
               info: "Não há canais disponíveis ou todos já possuem um usuário realocado\nvocê voltará para a fila",
             });
           }
+        }
+      }
+    );
+  }
+
+  function deleteRoom() {
+    connection.query(
+      "DELETE FROM api_channels WHERE name = ?",
+      [roomChannelName],
+      (error, results, fields) => {
+        if (error) {
+          console.error("Erro ao executar a exclusão:", error.message);
+        } else {
+          console.log("Exclusão realizada com sucesso!");
         }
       }
     );
