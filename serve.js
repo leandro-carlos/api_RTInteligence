@@ -97,7 +97,7 @@ io.on("connection", (socket) => {
   let position;
   let user_id;
   let callEndHour;
-  let alreadyExited;
+  let alreadyExited = false;
   let alreadyCanceled;
 
   function waitingInQueue(room) {
