@@ -76,7 +76,7 @@ class LoginController {
   // função pra retornar a versão do backend -> aplicativo
 
   static checkVersion = async (req, res) => {
-    res.status(200).json({ version: "1.0.0" });
+    res.status(200).json({ version: "1.0.1" });
   };
 }
 
