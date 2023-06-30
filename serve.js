@@ -101,7 +101,7 @@ io.on("connection", (socket) => {
   let alreadyCanceled;
 
   function waitingInQueue(room) {
-    const timer = position === "first" ? 60000 : 80000;
+    const timer = position === "first" ? 30000 : 40000;
     beyondLimitCountDown = setTimeout(function () {
       searchCallWithThree(room);
     }, timer);
