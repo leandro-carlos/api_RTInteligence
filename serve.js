@@ -159,7 +159,7 @@ io.on("connection", (socket) => {
         channelName: roomName,
         status: "WAITING_MORE_USERS",
         usersCount: usersCount + 1,
-        info: "Caso você não seja conectado a um canal com 3 usuários em 3 minutos, você será somado a um canal já preenchido.",
+        info: "Caso você não seja conectado a um canal com 3 usuários em 30 segundos, você será somado a um canal já preenchido.",
       });
 
       if (index !== -1) {
