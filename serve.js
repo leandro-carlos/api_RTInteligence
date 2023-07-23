@@ -8,6 +8,10 @@ const io = new Server(httpServer, {
 });
 const mysql = require("mysql");
 
+app.get("/", (req, res) => {
+  res.send("Health check: Aplicação está funcionando corretamente!");
+});
+
 // const connection = mysql.createConnection({
 //   host: "localhost",
 //   user: "root",
