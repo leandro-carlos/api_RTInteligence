@@ -3,25 +3,25 @@
 
 const { Sequelize } = require("sequelize");
 
-// const sequelize = new Sequelize(
-//   "rtinteligence",
-//   "AdminBdGrattus",
-//   "###GrattusdbrtIntelligence2023",
-//   {
-//     host: "database-1.cgxqc3ashbq8.sa-east-1.rds.amazonaws.com",
-//     dialect: "mysql",
-//   }
-// );
-
 const sequelize = new Sequelize(
   "rtinteligence",
-  "intelligenceAdm",
-  "intelligence147258369",
+  "AdminBdGrattus",
+  "###GrattusdbrtIntelligence2023",
   {
-    host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
+    host: "database-1.cgxqc3ashbq8.sa-east-1.rds.amazonaws.com",
     dialect: "mysql",
   }
 );
+
+// const sequelize = new Sequelize(
+//   "rtinteligence",
+//   "intelligenceAdm",
+//   "intelligence147258369",
+//   {
+//     host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
+//     dialect: "mysql",
+//   }
+// );
 
 // const sequelize = new Sequelize("rtinteligence", "root", "", {
 //   host: "localhost",

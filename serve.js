@@ -20,9 +20,11 @@ app.get("/", (req, res) => {
 // });
 
 const connection = mysql.createConnection({
-  host: "intelligence.crc0m61eeiss.us-east-1.rds.amazonaws.com",
-  user: "intelligenceAdm",
-  password: "intelligence147258369",
+  host: "database-1.cgxqc3ashbq8.sa-east-1.rds.amazonaws.com",
+  user: "AdminBdGrattus",
+
+  password: "###GrattusdbrtIntelligence2023",
+
   database: "rtinteligence",
 });
 
